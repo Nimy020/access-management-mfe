@@ -6,7 +6,7 @@ export default function Accordion({ title, children }) {
       <div className="tw-flex tw-justify-between tw-items-start">
         <h3 className="tw-text-lg tw-font-bold">{title}</h3>
         <div>{children}</div>
-        <div class="tw-w-2 tw-h-2 tw-border-black tw-border-b-2 tw-border-r-2 tw-transform tw-rotate-45"></div>
+        <div className="tw-w-2 tw-h-2 tw-border-black tw-border-b-2 tw-border-r-2 tw-transform tw-rotate-45"></div>
       </div>
     </div>
   );
