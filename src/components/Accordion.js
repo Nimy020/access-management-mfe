@@ -7,13 +7,13 @@ export default function Accordion({ title, children }) {
     setIsOpen(!isOpen);
   };
   return (
-    <div className="tw-border-t-2 tw-border-b-2 tw-border-gray-3 tw-py-4">
+    <div className="tw-border-t-2 tw-border-b tw-pt-4 tw-pb-10">
       <div
         className="tw-flex tw-justify-between tw-items-start"
         onClick={toggleAccordion}
       >
-        <h3 className="tw-text-lg tw-font-bold">{title}</h3>
-        {isOpen && <div>{children}</div>}
+        <h3 className="tw-text-normal tw-font-bold">{title}</h3>
+        {isOpen && <div className="tw-w-1/2">{children}</div>}
         <div
           className={`tw-accordion-icon tw-transition-transform tw-duration-300 ${
             isOpen ? "tw-rotate-180" : ""

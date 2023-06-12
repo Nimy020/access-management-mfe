@@ -2,15 +2,44 @@ import { Link, useParams } from "react-router-dom";
 import Accordion from "./components/Accordion";
 import Header from "./components/Header";
 import PageHeader from "./components/PageHeader";
-import { ChipComponent, TextBox } from "@sephora-csc/csc-component-library";
-import { useState, useEffect } from "react";
+import { TextBox, Dropdown, Button } from "@sephora-csc/csc-component-library";
+import Pills from "./components/Pills";
+import { useState, useEffect, useRef } from "react";
 import Modal from "./components/Modal";
 import primaryFeatures from "./demo.json";
+
+const roles = [
+  {
+    roleId: "1",
+    roleName: "csc_agent_tier1",
+  },
+  {
+    roleId: "2",
+    roleName: "csc_agent_tier2",
+  },
+  {
+    roleId: "3",
+    roleName: "csc_agent_tier3",
+  },
+];
+
+const subFeatures = [
+  {
+    featureId: null,
+    featureName: "Order_personal_fields_name",
+  },
+  {
+    featureId: null,
+    featureName: "Order_personal_fields_email",
+  },
+];
 
 export default function AccessManagement() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [featureState, setFeatureState] = useState({});
   const [modalForm, setModalForm] = useState({});
+
+  const roleRef = useRef(null);
   const params = useParams();
 
   const handleModalSubmit = () => {
@@ -85,29 +114,34 @@ export default function AccessManagement() {
       <Header />
       <PageHeader />
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36">
-        <div className="tw-relative tw-p-7">
-          <div className="tw-text-center ">
-            <h1 className="tw-text-xl tw-font-bold">
-              {featureState?.featureName}
-            </h1>
-            <p className="tw-text-sm tw-pt-4 tw-max-w-xl tw-m-auto">
-              {featureState?.featureDescription}
-            </p>
+        <div className="tw-relative">
+          <div className="tw-flex tw-items-center tw-pt-10 tw-pb-7 tw-border-b-2 tw-border-b-black">
+            <div className="tw-basis-1/2">
+              <h1 className="tw-text-xl tw-font-bold">
+                {featureState?.featureName}
+              </h1>
+              <p className="tw-text-sm tw-pt-4 tw-max-w-xl">
+                {featureState?.featureDescription}
+              </p>
+            </div>
+            <div className="tw-flex tw-basis-1/2 tw-justify-end tw-items-center">
+              {params?.id && (
+                <span
+                  onClick={() =>
+                    setModalState({ isOpen: true, action: "edit" })
+                  }
+                >
+                  Edit
+                </span>
+              )}
+              <button
+                className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
+                onClick={() => setModalState({ isOpen: true, action: "add" })}
+              >
+                Add new Feature
+              </button>
+            </div>
           </div>
-          {params?.id && (
-            <button
-              className="tw-absolute tw-top-0 tw-bottom-0 tw-right-0"
-              onClick={() => setModalState({ isOpen: true, action: "edit" })}
-            >
-              Edit
-            </button>
-          )}
-          <button
-            className="tw-absolute tw-top-0 tw-bottom-0 tw-right-0"
-            onClick={() => setModalState({ isOpen: true, action: "add" })}
-          >
-            Add New
-          </button>
         </div>
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
@@ -116,40 +150,35 @@ export default function AccessManagement() {
                 <p>{item.featureDescription}</p>
                 <div className="tw-mt-7">
                   <h3 className="tw-text-base tw-font-bold">Roles</h3>
+                  <div className="tw-grid tw-grid-cols-4 tw-gap-4 tw-pt-5"></div>
                   {item.roles.length > 0 &&
                     item.roles.map((role) => (
-                      <ChipComponent
-                        key={role.roleId}
-                        label={role.roleName}
-                        color={
-                          "tw-p-4 tw-inline-block tw-w-auto tw-bg-gray-4 tw-rounded-md"
-                        }
-                      />
+                      <Pills key={role.roleId} label={role.roleName} />
                     ))}
                 </div>
-                <div className="tw-mt-7">
-                  <div className="tw-relative">
+                <div className="tw-mt-7 tw-flex">
+                  <div className="tw-basis-1/2">
                     <h3 className="tw-text-base tw-font-bold">Sub features</h3>
-                    <Link
-                      className="tw-absolute tw-top-0 tw-bottom-0 tw-right-0"
-                      to={`/feature/${item.featureId}`}
-                    >
-                      <span className="tw-border tw-border-black tw-rounded-full tw-w-5 tw-h-5 tw-inline-block">
-                        +
-                      </span>
-                      Add New
-                    </Link>
                   </div>
-                  {item.subFeatures.length > 0 &&
-                    item.subFeatures.map((sf) => (
-                      <ChipComponent
-                        key={sf.featureId}
-                        label={sf.featureName}
-                        color={
-                          "tw-p-4 tw-inline-block tw-w-auto tw-bg-gray-4 tw-rounded-md"
-                        }
-                      />
-                    ))}
+                  <div className="tw-basis-1/2 tw-justify-end tw-flex tw-absolute tw-right-0 tw-mr-[139px]">
+                    <div className="tw-flex tw-items-center tw-space-x-2">
+                      <Link
+                        className="tw-absolute tw-top-0 tw-bottom-0 tw-right-0"
+                        to={`/feature/${item.featureId}`}
+                      >
+                        <div className="tw-flex tw-items-center tw-justify-center tw-w-[15px] tw-h-[15px] tw-border tw-rounded-full tw-border-gray-2 tw-bg-transparent tw-test-sm tw-text-gray-2">
+                          +
+                        </div>
+                        <div>Add New</div>
+                      </Link>
+                    </div>
+                    <div className="tw-grid tw-grid-cols-4 tw-gap-4 tw-pt-5">
+                      {item.subFeatures.length > 0 &&
+                        item.subFeatures.map((sf) => (
+                          <Pills key={sf.featureId} label={sf.featureName} />
+                        ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </Accordion>
@@ -162,10 +191,68 @@ export default function AccessManagement() {
             ? "Create New Feature"
             : `Edit ${featureState?.featureName}`
         }
-        onClose={handleModalSubmit}
+        onClose={() => setModalState({ isOpen: false, action: "" })}
       >
-        <TextBox onChange={handleFormChange} />
-        <TextBox onChange={handleFormChange} />
+        <div className=" tw-mt-5 tw-text-center tw-text-[#676567] tw-opacity-100">
+          Sed eu semper ligula. Proin dapibus nunc quis ligula ullamcorper
+          venenatis. Nulla mollis sagittis
+        </div>
+        <div className="tw-mt-5">
+          <TextBox label="Feature Name" />
+        </div>
+        <div className="tw-mt-3 tw-relative">
+          <input
+            type={"text"}
+            className="tw-rounded-md tw-border tw-border-gray focus:tw-border-black tw-h-[120px] tw-w-[380px] tw-opacity-100"
+          />
+          <span className="tw-absolute tw-text-[#676567] tw-left-3.5 tw-top-3.5 tw-pointer-events-none tw-transition tw-ease-in tw-delay-200 tw-text-xs peer-placeholder-shown:tw-top-3.5 peer-placeholder-shown:tw-text-sm peer-focus:tw-pointer-events-none peer-focus:tw-top-1 peer-focus:tw-transition peer-focus:tw-ease-in peer-focus:tw-delay-200 peer-focus:tw-text-xs">
+            {"Feature Description"}
+          </span>
+        </div>
+        <div className="tw-mt-4 tw-font-bold">{"Roles"}</div>
+        <div className="tw-mt-2.5">
+          <Dropdown
+            id={"role"}
+            className={"col-span-6"}
+            label={"Select Roles"}
+            type="select"
+            options={roles}
+            setSelectedOption={(value) => handleFormChange("roles", value)}
+            defaultValue={modalForm.roles?.roleName || ""}
+            dropDownRef={roleRef}
+            disabledSelect={true}
+            name={"roleName"}
+            code={"roleId"}
+            selectArrow={"greyArrow"}
+          />
+        </div>
+        <div className="tw-mt-4 tw-font-bold">{"Subfeatures"}</div>
+        <div className="tw-mt-2.5">
+          <Dropdown
+            id={"subRole"}
+            className={"col-span-6"}
+            label={"Select Sub Features"}
+            type="select"
+            options={subFeatures}
+            setSelectedOption={(value) =>
+              handleFormChange("subFeatures", value)
+            }
+            defaultValue={modalForm.subFeatures?.featureId || ""}
+            dropDownRef={roleRef}
+            disabledSelect={true}
+            name={"featureName"}
+            code={"featureId"}
+            selectArrow={"greyArrow"}
+          />
+        </div>
+        <div className="tw-mt-[30px]  tw-text-center">
+          <Button
+            label={"Submit"}
+            type={"primary"}
+            className={"tw-w-[180px]"}
+            disabled={false}
+          ></Button>
+        </div>
       </Modal>
     </>
   );
