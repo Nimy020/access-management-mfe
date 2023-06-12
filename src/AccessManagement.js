@@ -32,10 +32,23 @@ export default function AccessManagement() {
             </p>
             <div className="tw-mt-7">
               <h3 className="tw-text-base tw-font-bold">Roles</h3>
-              <ChipComponent />
+              <ChipComponent
+                label="Sub feature 1"
+                color={
+                  "tw-p-4 tw-inline-block tw-w-auto tw-bg-gray-4 tw-rounded-md"
+                }
+              />
             </div>
             <div className="tw-mt-7">
-              <h3 className="tw-text-base tw-font-bold">SUb features</h3>
+              <div className="tw-relative">
+                <h3 className="tw-text-base tw-font-bold">Sub features</h3>
+                <button className="tw-absolute tw-top-0 tw-bottom-0 tw-right-0">
+                  <span className="tw-border tw-border-black tw-rounded-full tw-w-5 tw-h-5 tw-inline-block">
+                    +
+                  </span>
+                  Add New
+                </button>
+              </div>
               <ChipComponent />
             </div>
           </div>
