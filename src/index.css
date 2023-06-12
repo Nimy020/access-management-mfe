@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("./fonts/HelveticaNeue-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("./fonts/HelveticaNeue-Bold.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}

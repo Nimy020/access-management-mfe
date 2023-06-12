@@ -17,6 +17,10 @@ module.exports = (webpackConfigEnv, argv) => {
           test: /\.css$/i,
           use: ["postcss-loader"],
         },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/,
+          use: ["file-loader"],
+        },
       ],
     },
   });
