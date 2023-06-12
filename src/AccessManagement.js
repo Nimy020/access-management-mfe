@@ -5,7 +5,7 @@ import PageHeader from "./components/PageHeader";
 import { ChipComponent, TextBox } from "@sephora-csc/csc-component-library";
 import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
-
+console.log("test push")
 const subFeatures = {
   featureId: "1",
   featureName: "Order_search",
