@@ -1,0 +1,170 @@
+[
+  {
+    "featureId": "1",
+    "featureName": "Order_search",
+    "featureDescription": "Order Search Feature",
+    "roles": [
+      {
+        "roleId": "1",
+        "roleName": "csc_agent_tier1"
+      },
+      {
+        "roleId": "2",
+        "roleName": "csc_agent_tier2"
+      },
+      {
+        "roleId": "3",
+        "roleName": "csc_agent_tier3"
+      }
+    ],
+    "subFeatures": [
+      {
+        "featureId": "2",
+        "featureName": "Order_search_address",
+        "featureDescription": "Order Search Address Feature",
+        "roles": [
+          {
+            "roleId": "2",
+            "roleName": "csc_agent_tier2"
+          },
+          {
+            "roleId": "3",
+            "roleName": "csc_agent_tier3"
+          }
+        ],
+        "subFeatures": []
+      },
+      {
+        "featureId": "3",
+        "featureName": "Order_search_status",
+        "featureDescription": "Order_search Status",
+        "roles": [
+          {
+            "roleId": "1",
+            "roleName": "csc_agent_tier1"
+          },
+          {
+            "roleId": "2",
+            "roleName": "csc_agent_tier2"
+          },
+          {
+            "roleId": "3",
+            "roleName": "csc_agent_tier3"
+          }
+        ],
+        "subFeatures": []
+      },
+      {
+        "featureId": "4",
+        "featureName": "Order_personal_fields",
+        "featureDescription": "Order Personal Fields",
+        "roles": [
+          {
+            "roleId": "1",
+            "roleName": "csc_agent_tier1"
+          }
+        ],
+        "subFeatures": [
+          {
+            "featureId": null,
+            "featureName": "Order_personal_fields_name",
+            "featureDescription": null,
+            "roles": null,
+            "subFeatures": null
+          },
+          {
+            "featureId": null,
+            "featureName": "Order_personal_fields_email",
+            "featureDescription": null,
+            "roles": null,
+            "subFeatures": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "featureId": "5",
+    "featureName": "Client_search",
+    "featureDescription": "Client Search Feature",
+    "roles": [
+      {
+        "roleId": "1",
+        "roleName": "csc_agent_tier1"
+      },
+      {
+        "roleId": "2",
+        "roleName": "csc_agent_tier2"
+      },
+      {
+        "roleId": "3",
+        "roleName": "csc_agent_tier3"
+      }
+    ],
+    "subFeatures": [
+      {
+        "featureId": "6",
+        "featureName": "Client_search_address",
+        "featureDescription": "Client Search Address Feature",
+        "roles": [
+          {
+            "roleId": "2",
+            "roleName": "csc_agent_tier2"
+          },
+          {
+            "roleId": "3",
+            "roleName": "csc_agent_tier3"
+          }
+        ],
+        "subFeatures": []
+      },
+      {
+        "featureId": "6",
+        "featureName": "Client_search_status",
+        "featureDescription": "Client_search Status",
+        "roles": [
+          {
+            "roleId": "1",
+            "roleName": "csc_agent_tier1"
+          },
+          {
+            "roleId": "2",
+            "roleName": "csc_agent_tier2"
+          },
+          {
+            "roleId": "3",
+            "roleName": "csc_agent_tier3"
+          }
+        ],
+        "subFeatures": []
+      },
+      {
+        "featureId": "7",
+        "featureName": "Client_personal_fields",
+        "featureDescription": "Client Personal Fields",
+        "roles": [
+          {
+            "roleId": "1",
+            "roleName": "csc_agent_tier1"
+          }
+        ],
+        "subFeatures": [
+          {
+            "featureId": null,
+            "featureName": "Client_personal_fields_name",
+            "featureDescription": null,
+            "roles": null,
+            "subFeatures": null
+          },
+          {
+            "featureId": null,
+            "featureName": "Client_personal_fields_email",
+            "featureDescription": null,
+            "roles": null,
+            "subFeatures": null
+          }
+        ]
+      }
+    ]
+  }
+]

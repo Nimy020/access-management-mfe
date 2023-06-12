@@ -5,94 +5,11 @@ import PageHeader from "./components/PageHeader";
 import { ChipComponent, TextBox } from "@sephora-csc/csc-component-library";
 import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
+import primaryFeatures from "./demo.json";
 
-const subFeatures = {
-  featureId: "1",
-  featureName: "Order_search",
-  featureDescription: "Order Search Feature",
-  roles: [
-    {
-      roleId: "1",
-      roleName: "csc_agent_tier1",
-    },
-    {
-      roleId: "2",
-      roleName: "csc_agent_tier2",
-    },
-    {
-      roleId: "3",
-      roleName: "csc_agent_tier3",
-    },
-  ],
-  subFeatures: [
-    {
-      featureId: "2",
-      featureName: "Order_search_address",
-      featureDescription: "Order Search Address Feature",
-      roles: [
-        {
-          roleId: "2",
-          roleName: "csc_agent_tier2",
-        },
-        {
-          roleId: "3",
-          roleName: "csc_agent_tier3",
-        },
-      ],
-      subFeatures: [],
-    },
-    {
-      featureId: "3",
-      featureName: "Order_search_status",
-      featureDescription: "Order_search Status",
-      roles: [
-        {
-          roleId: "1",
-          roleName: "csc_agent_tier1",
-        },
-        {
-          roleId: "2",
-          roleName: "csc_agent_tier2",
-        },
-        {
-          roleId: "3",
-          roleName: "csc_agent_tier3",
-        },
-      ],
-      subFeatures: [],
-    },
-    {
-      featureId: "4",
-      featureName: "Order_personal_fields",
-      featureDescription: "Order Personal Fields",
-      roles: [
-        {
-          roleId: "1",
-          roleName: "csc_agent_tier1",
-        },
-      ],
-      subFeatures: [
-        {
-          featureId: null,
-          featureName: "Order_personal_fields_name",
-          featureDescription: null,
-          roles: null,
-          subFeatures: null,
-        },
-        {
-          featureId: null,
-          featureName: "Order_personal_fields_email",
-          featureDescription: null,
-          roles: null,
-          subFeatures: null,
-        },
-      ],
-    },
-  ],
-};
 export default function AccessManagement() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
-  const [featureState, setFeatureState] = useState(subFeatures);
+  const [featureState, setFeatureState] = useState({});
   const [modalForm, setModalForm] = useState({});
   const params = useParams();
 
@@ -148,6 +65,19 @@ export default function AccessManagement() {
   //     ).then((res) => {
   //       setFeatureState(res.data);
   //     });
+  useEffect(() => {
+    if (params?.id) {
+      const data = primaryFeatures.find((f) => f.featureId === params.id);
+      setFeatureState(data);
+    } else {
+      setFeatureState({
+        featureName: "Primary Features",
+        featureDescription:
+          "Sed Eu Semper Ligula. Proin Dapibus Nunc Quis Ligula Ullamcorper Venenatis. Nulla Mollis Sagittis",
+        subFeatures: primaryFeatures,
+      });
+    }
+  }, [params]);
   // }, [params]);
 
   return (
@@ -158,10 +88,10 @@ export default function AccessManagement() {
         <div className="tw-relative tw-p-7">
           <div className="tw-text-center ">
             <h1 className="tw-text-xl tw-font-bold">
-              {featureState.featureName}
+              {featureState?.featureName}
             </h1>
             <p className="tw-text-sm tw-pt-4 tw-max-w-xl tw-m-auto">
-              {featureState.featureDescription}
+              {featureState?.featureDescription}
             </p>
           </div>
           {params?.id && (
@@ -179,7 +109,7 @@ export default function AccessManagement() {
             Add New
           </button>
         </div>
-        {featureState?.subFeatures.length > 0 &&
+        {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
             <Accordion title={item.featureName} key={item.featureId}>
               <div className="tw-max-w-2xl">
@@ -230,7 +160,7 @@ export default function AccessManagement() {
         title={
           modalState.action === "add"
             ? "Create New Feature"
-            : `Edit ${featureState.featureName}`
+            : `Edit ${featureState?.featureName}`
         }
         onClose={handleModalSubmit}
       >
