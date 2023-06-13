@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import Accordion from "./components/Accordion";
 import Header from "./components/Header";
 import PageHeader from "./components/PageHeader";
@@ -9,34 +8,23 @@ import FeatureHead from "./components/FeatureHead";
 import CreateNewFeature from "./components/CreateNewFeature";
 import SubFeatureContent from "./components/SubFeatureContent";
 
-export default function FeatureDetail() {
+export default function AccessManagement() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
-  const [featureState, setFeatureState] = useState({});
-
-  const params = useParams();
-
-  // useEffect(() => {
-  //   if (params?.id)
-  //     fetch(
-  //       `http://localhost:9000/csc-agent-platform-service/v1/acl/features/${params.id}`
-  //     ).then((res) => {
-  //       setFeatureState(res.data);
-  //     });
-
+  const [featureState, setFeatureState] = useState({
+    subFeatures: null,
+    featureId: null,
+    featureName: null,
+    featureDescription: null,
+  });
   useEffect(() => {
-    if (params?.id) {
-      const data = primaryFeatures.find((f) => f.featureId === params.id);
-      setFeatureState(data);
-    }
-  }, [params]);
-
-  // useEffect(() => {
-  //   fetch(
-  //     `http://localhost:9000/csc-agent-platform-service/v1/acl/primaryfeatures`
-  //   ).then((res) => {
-  //     setFeatureState(res.data);
-  //   });
-  // }, []);
+    setFeatureState({
+      featureId: "",
+      featureName: "Primary Features",
+      featureDescription:
+        "Sed Eu Semper Ligula. Proin Dapibus Nunc Quis Ligula Ullamcorper Venenatis. Nulla Mollis Sagittis",
+      subFeatures: primaryFeatures,
+    });
+  }, []);
 
   return (
     <>
@@ -59,10 +47,7 @@ export default function FeatureDetail() {
         title={"Create New Feature"}
         onClose={() => setModalState({ isOpen: false, action: "" })}
       >
-        <CreateNewFeature
-          setModalState={setModalState}
-          featureId={featureState?.featureId}
-        />
+        <CreateNewFeature setModalState={setModalState} featureId={null} />
       </Modal>
     </>
   );
