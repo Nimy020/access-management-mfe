@@ -1,11 +1,21 @@
 import React from "react";
 import Pills from "./Pills";
-import { Link } from "react-router-dom";
-import { SubFeatureContentProps } from "./Interface";
+import { useNavigate } from "react-router-dom";
+import { LocationState, SubFeatureContentProps } from "./Interface";
 
 export default function SubFeatureContent({
   item,
+  featureName,
 }: SubFeatureContentProps): JSX.Element {
+  const state: LocationState = { featureName: featureName };
+
+  const navigate = useNavigate();
+
+  const handleLinkClick = () => {
+    navigate(`/access-management/feature/${item.featureId}`, {
+      state: state,
+    });
+  };
   return (
     <div className="tw-max-w-2xl">
       <p>{item.featureDescription}</p>
@@ -30,15 +40,15 @@ export default function SubFeatureContent({
               ))}
           </div>
           <div className="">
-            <Link
+            <button
               className="tw-flex tw-items-center tw-w-[100px]"
-              to={`/access-management/feature/${item.featureId}`}
+              onClick={handleLinkClick}
             >
               <div className="tw-flex tw-items-center tw-justify-center tw-w-[15px] tw-h-[15px] tw-border tw-rounded-full tw-border-gray-2 tw-bg-transparent tw-test-sm tw-text-gray-2">
                 +
               </div>
               <div>Add New</div>
-            </Link>
+            </button>
           </div>
         </div>
       </div>

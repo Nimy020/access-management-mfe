@@ -24,4 +24,8 @@ export interface FeatureHeadProps {
 export interface SubFeatureContentProps {
   //  Object type should be declared
   item?: any;
+  featureName: string;
 }
+export type LocationState = {
+  featureName: string;
+};

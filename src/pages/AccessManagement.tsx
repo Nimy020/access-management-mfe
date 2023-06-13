@@ -1,5 +1,4 @@
 import Accordion from "../components/Accordion";
-import Header from "../components/Header";
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
@@ -28,7 +27,6 @@ export default function AccessManagement() {
 
   return (
     <>
-      <Header />
       <PageHeader />
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <FeatureHead
@@ -38,7 +36,10 @@ export default function AccessManagement() {
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
             <Accordion title={item.featureName} key={item.featureId}>
-              <SubFeatureContent item={item} />
+              <SubFeatureContent
+                item={item}
+                featureName={featureState?.featureName}
+              />
             </Accordion>
           ))}
       </section>
