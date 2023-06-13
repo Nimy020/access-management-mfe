@@ -77,10 +77,6 @@ const CreateNewFeature = ({
 
   return (
     <>
-      <div className=" tw-mt-5 tw-text-center tw-text-[#676567] tw-opacity-100">
-        Sed eu semper ligula. Proin dapibus nunc quis ligula ullamcorper
-        venenatis. Nulla mollis sagittis
-      </div>
       <div className="tw-mt-5">
         <TextBox
           label="Feature Name"

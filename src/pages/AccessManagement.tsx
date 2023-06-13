@@ -15,12 +15,18 @@ export default function AccessManagement() {
     featureName: null,
     featureDescription: null,
   });
+  const [isEditable, setIsEditable] = useState(false);
+  const [featureForm, setFeatureForm] = useState({});
+
+  const handleUpdateFeatureChange = (fieldName, fieldValue) => {
+    setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
+  };
+
   useEffect(() => {
     setFeatureState({
       featureId: "",
       featureName: "Primary Features",
-      featureDescription:
-        "Sed Eu Semper Ligula. Proin Dapibus Nunc Quis Ligula Ullamcorper Venenatis. Nulla Mollis Sagittis",
+      featureDescription: "Listed below primary features of CSC",
       subFeatures: primaryFeatures,
     });
   }, []);
@@ -32,6 +38,9 @@ export default function AccessManagement() {
         <FeatureHead
           setModalState={setModalState}
           featureState={featureState}
+          setIsEditable={setIsEditable}
+          isEditable={isEditable}
+          handleChange={handleUpdateFeatureChange}
         />
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
@@ -39,6 +48,7 @@ export default function AccessManagement() {
               <SubFeatureContent
                 item={item}
                 featureName={featureState?.featureName}
+                handleChange={handleUpdateFeatureChange}
               />
             </Accordion>
           ))}

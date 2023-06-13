@@ -6,6 +6,7 @@ import { LocationState, SubFeatureContentProps } from "./Interface";
 export default function SubFeatureContent({
   item,
   featureName,
+  handleChange,
 }: SubFeatureContentProps): JSX.Element {
   const state: LocationState = { featureName: featureName };
 
@@ -24,7 +25,10 @@ export default function SubFeatureContent({
         <div>
           {item.roles.length > 0 &&
             item.roles.map((role) => (
-              <Pills key={role.roleId} label={role.roleName} />
+              <Pills
+                key={role.roleId}
+                label={role.roleName}
+              />
             ))}
         </div>
       </div>
@@ -36,7 +40,10 @@ export default function SubFeatureContent({
           <div className="">
             {item.subFeatures.length > 0 &&
               item.subFeatures.map((sf) => (
-                <Pills key={sf.featureId} label={sf.featureName} />
+                <Pills
+                  key={sf.featureId}
+                  label={sf.featureName}
+                />
               ))}
           </div>
           <div className="">

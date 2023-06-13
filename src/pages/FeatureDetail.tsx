@@ -7,6 +7,7 @@ import primaryFeatures from "../demo.json";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
+import Pills from "../components/Pills";
 
 export default function FeatureDetail() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
@@ -14,7 +15,14 @@ export default function FeatureDetail() {
     subFeatures: null,
     featureId: null,
     featureName: null,
+    roles: null,
   });
+  const [isEditable, setIsEditable] = useState(false);
+  const [featureForm, setFeatureForm] = useState({});
+
+  const handleUpdateFeatureChange = (fieldName, fieldValue) => {
+    setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
+  };
 
   const params = useParams();
 
@@ -40,13 +48,26 @@ export default function FeatureDetail() {
         <FeatureHead
           setModalState={setModalState}
           featureState={featureState}
+          setIsEditable={setIsEditable}
+          isEditable={isEditable}
+          handleChange={handleUpdateFeatureChange}
         />
+        <h3 className="tw-text-base tw-font-bold tw-my-4">Roles</h3>
+        <div className="tw-mb-6">
+          {featureState?.roles?.length > 0 &&
+            featureState?.roles.map((item) => (
+              <Pills label={item.roleName} key={item.roleId} />
+            ))}
+        </div>
+        <hr className="tw-border-b-2 tw-border-b-black tw-my-10" />
+        <h3 className="tw-text-lg tw-font-bold  tw-mb-4">Sub Features</h3>
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
             <Accordion title={item.featureName} key={item.featureId}>
               <SubFeatureContent
                 item={item}
                 featureName={featureState?.featureName}
+                handleChange={handleUpdateFeatureChange}
               />
             </Accordion>
           ))}
