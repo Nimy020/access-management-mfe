@@ -40,9 +40,11 @@ export default function AccessManagement() {
   const [modalForm, setModalForm] = useState({});
 
   const roleRef = useRef(null);
+  const subFeatureRef = useRef(null);
   const params = useParams();
 
   const handleModalSubmit = () => {
+    console.log(modalForm);
     let formData;
     if (params?.id)
       formData = { ...modalForm, parentFeatureId: featureState.featureId };
@@ -54,27 +56,26 @@ export default function AccessManagement() {
       },
       body: JSON.stringify(formData),
     };
+    // let apiUrl =
+    //   modalState.action === "add"
+    //     ? "http://localhost:8080/csc-agent-platform-service/v1/acl/feature"
+    //     : `http://localhost:8080/csc-agent-platform-service/v1/acl/feature/${params.id}`;
 
-    let apiUrl =
-      modalState.action === "add"
-        ? "http://localhost:8080/csc-agent-platform-service/v1/acl/feature"
-        : `http://localhost:8080/csc-agent-platform-service/v1/acl/feature/${params.id}`;
-
-    fetch(apiUrl, POST_DATA)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Request failed with status " + response.status);
-        }
-      })
-      .then((responseData) => {
-        setFeatureState(responseData);
-        setModalState({ isOpen: false, action: "" });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetch(apiUrl, POST_DATA)
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       return response.json();
+    //     } else {
+    //       throw new Error("Request failed with status " + response.status);
+    //     }
+    //   })
+    //   .then((responseData) => {
+    //     setFeatureState(responseData);
+    //     setModalState({ isOpen: false, action: "" });
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const handleFormChange = (fieldName, fieldValue) => {
@@ -150,33 +151,34 @@ export default function AccessManagement() {
                 <p>{item.featureDescription}</p>
                 <div className="tw-mt-7">
                   <h3 className="tw-text-base tw-font-bold">Roles</h3>
-                  <div className="tw-grid tw-grid-cols-4 tw-gap-4 tw-pt-5"></div>
-                  {item.roles.length > 0 &&
-                    item.roles.map((role) => (
-                      <Pills key={role.roleId} label={role.roleName} />
-                    ))}
+                  <div>
+                    {item.roles.length > 0 &&
+                      item.roles.map((role) => (
+                        <Pills key={role.roleId} label={role.roleName} />
+                      ))}
+                  </div>
                 </div>
-                <div className="tw-mt-7 tw-flex">
+                <div className="tw-mt-7">
                   <div className="tw-basis-1/2">
                     <h3 className="tw-text-base tw-font-bold">Sub features</h3>
                   </div>
-                  <div className="tw-basis-1/2 tw-justify-end tw-flex tw-absolute tw-right-0 tw-mr-[139px]">
-                    <div className="tw-flex tw-items-center tw-space-x-2">
+                  <div className="tw-basis-1/2 tw-flex">
+                    <div className="">
+                      {item.subFeatures.length > 0 &&
+                        item.subFeatures.map((sf) => (
+                          <Pills key={sf.featureId} label={sf.featureName} />
+                        ))}
+                    </div>
+                    <div className="">
                       <Link
-                        className="tw-absolute tw-top-0 tw-bottom-0 tw-right-0"
-                        to={`/feature/${item.featureId}`}
+                        className="tw-flex tw-items-center tw-w-[100px]"
+                        to={`/access-management/feature/${item.featureId}`}
                       >
                         <div className="tw-flex tw-items-center tw-justify-center tw-w-[15px] tw-h-[15px] tw-border tw-rounded-full tw-border-gray-2 tw-bg-transparent tw-test-sm tw-text-gray-2">
                           +
                         </div>
                         <div>Add New</div>
                       </Link>
-                    </div>
-                    <div className="tw-grid tw-grid-cols-4 tw-gap-4 tw-pt-5">
-                      {item.subFeatures.length > 0 &&
-                        item.subFeatures.map((sf) => (
-                          <Pills key={sf.featureId} label={sf.featureName} />
-                        ))}
                     </div>
                   </div>
                 </div>
@@ -198,11 +200,17 @@ export default function AccessManagement() {
           venenatis. Nulla mollis sagittis
         </div>
         <div className="tw-mt-5">
-          <TextBox label="Feature Name" />
+          <TextBox
+            label="Feature Name"
+            onChange={(e) => handleFormChange("featureName", e.target.value)}
+          />
         </div>
         <div className="tw-mt-3 tw-relative">
           <input
             type={"text"}
+            onChange={(e) =>
+              handleFormChange("featureDescription", e.target.value)
+            }
             className="tw-rounded-md tw-border tw-border-gray focus:tw-border-black tw-h-[120px] tw-w-[380px] tw-opacity-100"
           />
           <span className="tw-absolute tw-text-[#676567] tw-left-3.5 tw-top-3.5 tw-pointer-events-none tw-transition tw-ease-in tw-delay-200 tw-text-xs peer-placeholder-shown:tw-top-3.5 peer-placeholder-shown:tw-text-sm peer-focus:tw-pointer-events-none peer-focus:tw-top-1 peer-focus:tw-transition peer-focus:tw-ease-in peer-focus:tw-delay-200 peer-focus:tw-text-xs">
@@ -218,7 +226,7 @@ export default function AccessManagement() {
             type="select"
             options={roles}
             setSelectedOption={(value) => handleFormChange("roles", value)}
-            defaultValue={modalForm.roles?.roleName || ""}
+            defaultValue={modalForm.roles?.name || ""}
             dropDownRef={roleRef}
             disabledSelect={true}
             name={"roleName"}
@@ -237,8 +245,8 @@ export default function AccessManagement() {
             setSelectedOption={(value) =>
               handleFormChange("subFeatures", value)
             }
-            defaultValue={modalForm.subFeatures?.featureId || ""}
-            dropDownRef={roleRef}
+            defaultValue={modalForm.subFeatures?.name || ""}
+            dropDownRef={subFeatureRef}
             disabledSelect={true}
             name={"featureName"}
             code={"featureId"}
@@ -251,6 +259,7 @@ export default function AccessManagement() {
             type={"primary"}
             className={"tw-w-[180px]"}
             disabled={false}
+            onClick={handleModalSubmit}
           ></Button>
         </div>
       </Modal>

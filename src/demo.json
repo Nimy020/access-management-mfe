@@ -166,5 +166,12 @@
         ]
       }
     ]
+  },
+  {
+    "featureId": "9",
+    "featureName": "New_feature",
+    "featureDescription": "New Search Feature",
+    "roles": [],
+    "subFeatures": []
   }
 ]
