@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { TextBox, Dropdown, Button } from "@sephora-csc/csc-component-library";
+import { CreateNewFeatureProps } from "./Interface";
 
 const roles = [
   {
@@ -27,8 +28,14 @@ const subFeatures = [
   },
 ];
 
-export default function CreateNewFeature({ setModalState, featureId }) {
-  const [modalForm, setModalForm] = useState({});
+const CreateNewFeature = ({
+  setModalState,
+  featureId,
+}: CreateNewFeatureProps): JSX.Element => {
+  const [modalForm, setModalForm] = useState({
+    roles: null,
+    subFeatures: null,
+  });
   const roleRef = useRef(null);
   const subFeatureRef = useRef(null);
 
@@ -43,25 +50,25 @@ export default function CreateNewFeature({ setModalState, featureId }) {
       },
       body: JSON.stringify(formData),
     };
-    let apiUrl =
-      modalState.action === "add"
-        ? "http://localhost:9000/csc-agent-platform-service/v1/acl/feature"
-        : `http://localhost:9000/csc-agent-platform-service/v1/acl/feature/${params.id}`;
+    // let apiUrl =
+    //   modalState.action === "add"
+    //     ? "http://localhost:9000/csc-agent-platform-service/v1/acl/feature"
+    //     : `http://localhost:9000/csc-agent-platform-service/v1/acl/feature/${params.id}`;
 
-    fetch(apiUrl, POST_DATA)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Request failed with status " + response.status);
-        }
-      })
-      .then((responseData) => {
-        setModalState({ isOpen: false, action: "" });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetch(apiUrl, POST_DATA)
+    //   .then((response) => {
+    //     if (response.ok) {
+    //       return response.json();
+    //     } else {
+    //       throw new Error("Request failed with status " + response.status);
+    //     }
+    //   })
+    //   .then((responseData) => {
+    //     setModalState({ isOpen: false, action: "" });
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   const handleFormChange = (fieldName, fieldValue) => {
@@ -137,4 +144,5 @@ export default function CreateNewFeature({ setModalState, featureId }) {
       </div>
     </>
   );
-}
+};
+export default CreateNewFeature;

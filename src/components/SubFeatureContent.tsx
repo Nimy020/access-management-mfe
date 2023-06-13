@@ -1,8 +1,11 @@
 import React from "react";
 import Pills from "./Pills";
 import { Link } from "react-router-dom";
+import { SubFeatureContentProps } from "./Interface";
 
-export default function SubFeatureContent({ item }) {
+export default function SubFeatureContent({
+  item,
+}: SubFeatureContentProps): JSX.Element {
   return (
     <div className="tw-max-w-2xl">
       <p>{item.featureDescription}</p>

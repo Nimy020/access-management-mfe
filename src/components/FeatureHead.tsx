@@ -1,6 +1,10 @@
 import React from "react";
+import { FeatureHeadProps } from "./Interface";
 
-export default function FeatureHead({ setModalState, featureState }) {
+const FeatureHead = ({
+  setModalState,
+  featureState,
+}: FeatureHeadProps): JSX.Element => {
   return (
     <div className="tw-relative">
       <div className="tw-flex tw-items-center tw-pt-10 tw-pb-7 tw-border-b-2 tw-border-b-black">
@@ -30,4 +34,5 @@ export default function FeatureHead({ setModalState, featureState }) {
       </div>
     </div>
   );
-}
+};
+export default FeatureHead;

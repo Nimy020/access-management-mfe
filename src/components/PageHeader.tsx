@@ -2,7 +2,7 @@
 // import "../Styles.css";
 import search from "../assets/Union.svg";
 
-export default function PageHeader() {
+const PageHeader = (): JSX.Element => {
   const id = "1234";
   return (
     <div className="tw-bg-gray-3 tw-items-center">
@@ -28,4 +28,6 @@ export default function PageHeader() {
       </div>
     </div>
   );
-}
+};
+
+export default PageHeader;
