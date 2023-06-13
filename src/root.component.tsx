@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AccessManagement from "./pages/AccessManagement";
 import "./index.css";
-import FeatureDetail from "./FeatureDetail";
+import FeatureDetail from "./pages/FeatureDetail";
 
 export default function Root(props) {
   return (

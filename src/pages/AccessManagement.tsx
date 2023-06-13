@@ -10,8 +10,12 @@ import SubFeatureContent from "../components/SubFeatureContent";
 
 export default function AccessManagement() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
-  const [featureState, setFeatureState] = useState({});
-
+  const [featureState, setFeatureState] = useState({
+    subFeatures: null,
+    featureId: null,
+    featureName: null,
+    featureDescription: null,
+  });
   useEffect(() => {
     setFeatureState({
       featureId: "",
@@ -21,14 +25,6 @@ export default function AccessManagement() {
       subFeatures: primaryFeatures,
     });
   }, []);
-
-  // useEffect(() => {
-  //   fetch(
-  //     `http://localhost:9000/csc-agent-platform-service/v1/acl/primaryfeatures`
-  //   ).then((res) => {
-  //     setFeatureState(res.data);
-  //   });
-  // }, []);
 
   return (
     <>
@@ -51,7 +47,7 @@ export default function AccessManagement() {
         title={"Create New Feature"}
         onClose={() => setModalState({ isOpen: false, action: "" })}
       >
-        <CreateNewFeature setModalState={setModalState} featureId={""} />
+        <CreateNewFeature setModalState={setModalState} featureId={null} />
       </Modal>
     </>
   );
