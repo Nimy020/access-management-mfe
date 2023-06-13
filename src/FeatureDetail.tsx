@@ -11,7 +11,10 @@ import SubFeatureContent from "./components/SubFeatureContent";
 
 export default function AccessManagement() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
-  const [featureState, setFeatureState] = useState({});
+  const [featureState, setFeatureState] = useState({
+    subFeatures: null,
+    featureId: null,
+  });
 
   const params = useParams();
 
@@ -27,24 +30,8 @@ export default function AccessManagement() {
     if (params?.id) {
       const data = primaryFeatures.find((f) => f.featureId === params.id);
       setFeatureState(data);
-    } else {
-      setFeatureState({
-        featureId: "",
-        featureName: "Primary Features",
-        featureDescription:
-          "Sed Eu Semper Ligula. Proin Dapibus Nunc Quis Ligula Ullamcorper Venenatis. Nulla Mollis Sagittis",
-        subFeatures: primaryFeatures,
-      });
     }
   }, [params]);
-
-  // useEffect(() => {
-  //   fetch(
-  //     `http://localhost:9000/csc-agent-platform-service/v1/acl/primaryfeatures`
-  //   ).then((res) => {
-  //     setFeatureState(res.data);
-  //   });
-  // }, []);
 
   return (
     <>
