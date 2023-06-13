@@ -9,7 +9,7 @@ import FeatureHead from "./components/FeatureHead";
 import CreateNewFeature from "./components/CreateNewFeature";
 import SubFeatureContent from "./components/SubFeatureContent";
 
-export default function AccessManagement() {
+export default function FeatureDetail() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [featureState, setFeatureState] = useState({});
 
@@ -27,14 +27,6 @@ export default function AccessManagement() {
     if (params?.id) {
       const data = primaryFeatures.find((f) => f.featureId === params.id);
       setFeatureState(data);
-    } else {
-      setFeatureState({
-        featureId: "",
-        featureName: "Primary Features",
-        featureDescription:
-          "Sed Eu Semper Ligula. Proin Dapibus Nunc Quis Ligula Ullamcorper Venenatis. Nulla Mollis Sagittis",
-        subFeatures: primaryFeatures,
-      });
     }
   }, [params]);
 
