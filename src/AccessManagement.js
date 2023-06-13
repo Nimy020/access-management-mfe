@@ -44,7 +44,6 @@ export default function AccessManagement() {
   const params = useParams();
 
   const handleModalSubmit = () => {
-    console.log(modalForm);
     let formData;
     if (params?.id)
       formData = { ...modalForm, parentFeatureId: featureState.featureId };
@@ -56,59 +55,61 @@ export default function AccessManagement() {
       },
       body: JSON.stringify(formData),
     };
-    // let apiUrl =
-    //   modalState.action === "add"
-    //     ? "http://localhost:8080/csc-agent-platform-service/v1/acl/feature"
-    //     : `http://localhost:8080/csc-agent-platform-service/v1/acl/feature/${params.id}`;
+    let apiUrl =
+      modalState.action === "add"
+        ? "http://localhost:9000/csc-agent-platform-service/v1/acl/feature"
+        : `http://localhost:9000/csc-agent-platform-service/v1/acl/feature/${params.id}`;
 
-    // fetch(apiUrl, POST_DATA)
-    //   .then((response) => {
-    //     if (response.ok) {
-    //       return response.json();
-    //     } else {
-    //       throw new Error("Request failed with status " + response.status);
-    //     }
-    //   })
-    //   .then((responseData) => {
-    //     setFeatureState(responseData);
-    //     setModalState({ isOpen: false, action: "" });
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    fetch(apiUrl, POST_DATA)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Request failed with status " + response.status);
+        }
+      })
+      .then((responseData) => {
+        setFeatureState(responseData);
+        setModalState({ isOpen: false, action: "" });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleFormChange = (fieldName, fieldValue) => {
     setModalForm({ ...modalForm, [fieldName]: fieldValue });
   };
 
-  // useEffect(() => {
-  //   if (params?.id)
-  //     fetch(
-  //       `http://localhost:8080/csc-agent-platform-service/v1/acl/primaryfeatures`
-  //     ).then((res) => {
-  //       setFeatureState(res.data);
-  //     });
-  //   else
-  //     fetch(
-  //       `http://localhost:8080/csc-agent-platform-service/v1/acl/features/${params.id}`
-  //     ).then((res) => {
-  //       setFeatureState(res.data);
-  //     });
   useEffect(() => {
-    if (params?.id) {
-      const data = primaryFeatures.find((f) => f.featureId === params.id);
-      setFeatureState(data);
-    } else {
-      setFeatureState({
-        featureName: "Primary Features",
-        featureDescription:
-          "Sed Eu Semper Ligula. Proin Dapibus Nunc Quis Ligula Ullamcorper Venenatis. Nulla Mollis Sagittis",
-        subFeatures: primaryFeatures,
+    if (params?.id)
+      fetch(
+        `http://localhost:9000/csc-agent-platform-service/v1/acl/features/${params.id}`
+      ).then((res) => {
+        setFeatureState(res.data);
       });
-    }
+
+    // useEffect(() => {
+    //   if (params?.id) {
+    //     const data = primaryFeatures.find((f) => f.featureId === params.id);
+    //     setFeatureState(data);
+    //   } else {
+    //     setFeatureState({
+    //       featureName: "Primary Features",
+    //       featureDescription:
+    //         "Sed Eu Semper Ligula. Proin Dapibus Nunc Quis Ligula Ullamcorper Venenatis. Nulla Mollis Sagittis",
+    //       subFeatures: primaryFeatures,
+    //     });
+    //   }
   }, [params]);
-  // }, [params]);
+
+  useEffect(() => {
+    fetch(
+      `http://localhost:9000/csc-agent-platform-service/v1/acl/primaryfeatures`
+    ).then((res) => {
+      setFeatureState(res.data);
+    });
+  }, []);
 
   return (
     <>
