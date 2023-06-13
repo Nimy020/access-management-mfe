@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AccessManagement from "./AccessManagement";
 import "./index.css";
-import FeatureManagement from "./FeatureManagement";
+// import FeatureManagement from "./FeatureManagement";
 export default function Root(props) {
   return (
     <BrowserRouter>
@@ -16,7 +16,7 @@ export default function Root(props) {
         />
         <Route
           path={"/access-management/feature/:id"}
-          element={<FeatureManagement />}
+          element={<AccessManagement />}
         />
       </Routes>
     </BrowserRouter>
