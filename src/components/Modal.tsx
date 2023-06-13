@@ -1,7 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import closeIcon from "../assets/close.svg";
+import { ModalProps } from "./Interface";
 
-const Modal = ({ isOpen, onClose, children, title }) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  children,
+  title,
+}: ModalProps): JSX.Element => {
   if (!isOpen) return null;
   return (
     <div className="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-z-50">

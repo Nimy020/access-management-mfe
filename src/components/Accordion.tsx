@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { AccordianProps } from "./Interface";
 
-export default function Accordion({ title, children }) {
+const Accordion = ({ title, children }: AccordianProps): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleAccordion = () => {
+  const toggleAccordion = (): void => {
     setIsOpen(!isOpen);
   };
   return (
@@ -36,4 +37,5 @@ export default function Accordion({ title, children }) {
       </div>
     </div>
   );
-}
+};
+export default Accordion;

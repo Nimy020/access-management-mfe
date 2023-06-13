@@ -34,9 +34,9 @@ const subFeatures = [
   },
 ];
 
-export default function AccessManagement() {
+const FeatureManagement = () => {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
-  const [featureState, setFeatureState] = useState({ featureId: null });
+  const [featureState, setFeatureState] = useState({});
   const [modalForm, setModalForm] = useState({});
 
   const roleRef = useRef(null);
@@ -267,4 +267,5 @@ export default function AccessManagement() {
       </Modal>
     </>
   );
-}
+};
+export default FeatureManagement;
