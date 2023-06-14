@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import { useEffect, useRef } from "react";
 import closeIcon from "../assets/close.svg";
 import { ModalProps } from "./Interface";
 
@@ -8,11 +9,32 @@ const Modal = ({
   children,
   title,
 }: ModalProps): JSX.Element => {
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
   return (
     <div className="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-z-50">
       <div className="tw-modal-overlay tw-fixed tw-inset-0 tw-bg-black tw-opacity-50"></div>
-      <div className="tw-modal-container tw-bg-white tw-w-[440px] tw-h-[607px] md:tw-max-w-md tw-mx-auto tw-rounded tw-shadow-lg tw-z-50 tw-overflow-y-auto">
+      <div
+        className="tw-modal-container tw-bg-white tw-w-[440px] tw-h-[607px] md:tw-max-w-md tw-mx-auto tw-rounded tw-shadow-lg tw-z-50 tw-overflow-y-auto"
+        ref={modalRef}
+      >
         <div className="tw-py-5 tw-modal-header tw-flex tw-items-center">
           <div className="tw-flex-grow tw-text-center tw-font-bold tw-text-lg">
             {title}
