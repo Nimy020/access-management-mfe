@@ -2,6 +2,8 @@ export interface AccordianProps {
   title?: string;
   children?: JSX.Element;
   isEditable?: boolean;
+  handleDelete?: any;
+  handleLink?: any;
 }
 export interface ModalProps {
   isOpen?: boolean;
@@ -12,6 +14,7 @@ export interface ModalProps {
 export interface PillsProps {
   label?: string;
   onChange?: any;
+  isEditable?: any;
 }
 export interface CreateNewFeatureProps {
   setModalState?: any;
@@ -22,6 +25,7 @@ export interface FeatureHeadProps {
   setIsEditable?: any;
   isEditable?: boolean;
   handleChange?: any;
+  handleSaveChanges?: any;
   //  Object type should be declared
   featureState?: any;
 }

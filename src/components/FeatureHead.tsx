@@ -1,4 +1,3 @@
-import React from "react";
 import { FeatureHeadProps } from "./Interface";
 
 const FeatureHead = ({
@@ -7,6 +6,7 @@ const FeatureHead = ({
   setIsEditable,
   isEditable,
   handleChange,
+  handleSaveChanges,
 }: FeatureHeadProps): JSX.Element => {
   return (
     <div className="tw-relative">
@@ -29,7 +29,7 @@ const FeatureHead = ({
                 className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
                 onClick={() => setModalState({ isOpen: true, action: "add" })}
               >
-                Add new Feature
+                Add Sub Feature
               </button>
             </div>
           </>
@@ -61,7 +61,7 @@ const FeatureHead = ({
               </p>
             </div>
             <div className="tw-flex tw-basis-1/2 tw-justify-end tw-items-center">
-              <span>Save Changes</span>
+              <button onClick={handleSaveChanges}>Save Changes</button>
               <button
                 className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
                 onClick={() => setIsEditable(false)}

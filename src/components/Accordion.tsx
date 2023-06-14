@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import deleteIcon from "../assets/delete.svg";
 import { AccordianProps } from "./Interface";
-
+import editIcon from "../assets/pencil.svg";
 const Accordion = ({
   title,
   children,
   isEditable,
+  handleDelete,
+  handleLink,
 }: AccordianProps): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleAccordion = (): void => {
-    setIsOpen(!isOpen);
+  const toggleAccordion = (e): void => {
+    if (isEditable) e.preventDefault();
+    else setIsOpen(!isOpen);
   };
   return (
     <div className="tw-border-t-2 tw-border-b tw-pt-5 tw-pb-8">
@@ -21,28 +24,38 @@ const Accordion = ({
         {isOpen && <div className="tw-w-1/2">{children}</div>}
         <div className="tw-flex tw-w-[55px] tw-gap-4 tw-justify-end">
           {isEditable && (
-            <img className="tw-w-[20px]" src={deleteIcon} alt="" />
+            <button onClick={handleDelete}>
+              <img className="tw-w-[20px]" src={deleteIcon} alt="" />
+            </button>
           )}
-          <div
-            className={`tw-accordion-icon tw-transition-transform tw-duration-300 ${
-              isOpen ? "tw-rotate-180" : ""
-            }`}
-            onClick={toggleAccordion}
-          >
-            <svg
-              className="tw-w-6 tw-h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </div>
+
+          {!isEditable && (
+            <>
+              <button onClick={handleLink} className="tw-w-[20px]">
+                <img src={editIcon} alt="Edit"></img>
+              </button>
+              <div
+                className={`tw-accordion-icon tw-transition-transform tw-duration-300 ${
+                  isOpen ? "tw-rotate-180" : ""
+                }`}
+                onClick={toggleAccordion}
+              >
+                <svg
+                  className="tw-w-6 tw-h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
