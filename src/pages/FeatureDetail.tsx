@@ -80,25 +80,39 @@ export default function FeatureDetail() {
   };
 
   const handleRoleChange = (id, value) => {
-    let updatedRoles = featureState.roles;
+    let updatedRoles = [...featureState.roles];
     if (id) {
       updatedRoles = updatedRoles.filter((item) => item.roleId !== id);
     } else {
-      updatedRoles = updatedRoles.push(value);
+      const checkIfpresent = updatedRoles.find(
+        (item) => item.roleId === value.code
+      );
+      if (!checkIfpresent)
+        updatedRoles.push({
+          roleId: value.code,
+          roleName: value.name,
+        });
     }
     setFeatureState({ ...featureState, roles: updatedRoles });
   };
 
-  const handleSubfeatureChange = (id, value) => {
-    let updatedSubfeatures = featureState.roles;
+  const handleSubfeatureChange = (id, value) => {console.log(id,value)
+    let updatedSubfeatures = [...featureState.subFeatures];
     if (id) {
       updatedSubfeatures = updatedSubfeatures.filter(
         (item) => item.featureId !== id
       );
     } else {
-      updatedSubfeatures = updatedSubfeatures.push(value);
+      const checkIfpresent = updatedSubfeatures.find(
+        (item) => item.featureId === value.code
+      );
+      if (!checkIfpresent)
+        updatedSubfeatures.push({
+          featureId: value.code,
+          featureName: value.name,
+        });
     }
-    setFeatureState({ ...featureState, roles: updatedSubfeatures });
+    setFeatureState({ ...featureState, subFeatures: updatedSubfeatures });
   };
 
   useEffect(() => {
@@ -154,6 +168,7 @@ export default function FeatureDetail() {
               name={"roleName"}
               code={"roleId"}
               selectArrow={"greyArrow"}
+              value={""}
             />
           </div>
         )}
@@ -191,6 +206,7 @@ export default function FeatureDetail() {
               setSelectedOption={(value) => {
                 if (value.code) handleSubfeatureChange("", value);
               }}
+              value=""
               disabledSelect={true}
               name={"featureName"}
               code={"featureId"}

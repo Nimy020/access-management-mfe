@@ -69,7 +69,7 @@ const Dropdown = (props) => {
 
     for (let i = 0; i < option?.length; i += 1) {
       if (
-        inputIndex < inputValue.length &&
+        inputIndex < inputValue?.length &&
         lowerCaseOption[i] === lowerCaseInputValue[inputIndex]
       ) {
         formattedOption += `<span class=${customStyles.dropdown.typingBold}>${option[i]}</span>`;
