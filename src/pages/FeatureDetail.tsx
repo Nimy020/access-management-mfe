@@ -73,7 +73,7 @@ export default function FeatureDetail() {
   return (
     <>
       <PageHeader />
-      <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36">
+      <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <FeatureHead
           setModalState={setModalState}
           featureState={featureState}

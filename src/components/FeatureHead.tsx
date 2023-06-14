@@ -8,6 +8,10 @@ const FeatureHead = ({
   handleChange,
   handleSaveChanges,
 }: FeatureHeadProps): JSX.Element => {
+  const handleFeatureDelete = () => {
+    console.log("deleted");
+  };
+
   return (
     <div className="tw-relative">
       <div className="tw-flex tw-items-center tw-pt-10 tw-pb-7 tw-border-b-2 tw-border-b-black">
@@ -23,7 +27,20 @@ const FeatureHead = ({
             </div>
             <div className="tw-flex tw-basis-1/2 tw-justify-end tw-items-center">
               {featureState?.featureId && (
-                <span onClick={() => setIsEditable(true)}>Edit</span>
+                <>
+                  <button
+                    onClick={() => setIsEditable(true)}
+                    className="tw-mr-5 hover:tw-underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={handleFeatureDelete}
+                    className="hover:tw-underline"
+                  >
+                    Delete
+                  </button>
+                </>
               )}
               <button
                 className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
