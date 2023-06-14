@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import deleteIcon from "../assets/delete.svg";
 import { AccordianProps } from "./Interface";
 import editIcon from "../assets/pencil.svg";
@@ -15,6 +15,10 @@ const Accordion = ({
     if (isEditable) e.preventDefault();
     else setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    if (isEditable) setIsOpen(false);
+  }, [isEditable]);
   return (
     <div className="tw-border-t-2 tw-border-b tw-pt-5 tw-pb-8">
       <div className="tw-flex tw-justify-between tw-items-start">
