@@ -10,6 +10,7 @@ import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
 import Pills from "../components/Pills";
 import { LocationState } from "../components/Interface";
+import Dropdown from "../components/Dropdown/Dropdown";
 
 export default function FeatureDetail() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
@@ -21,32 +22,91 @@ export default function FeatureDetail() {
   });
   const [isEditable, setIsEditable] = useState(false);
   const [featureForm, setFeatureForm] = useState({});
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [featureOptions, setFeatureOptions] = useState([]);
 
   const state: LocationState = { featureName: featureState?.featureName };
 
   const navigate = useNavigate();
+  const params = useParams();
+
+  const handleRoleSearch = async (val) => {
+    const searchTerm = val.value;
+    try {
+      const response = await axios.get(
+        `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/roles/${searchTerm}`
+      );
+      const data = response.data;
+      if (data === "") {
+        setRoleOptions([]);
+      } else {
+        setRoleOptions(data);
+      }
+    } catch (error) {
+      // console.error("Error:", error);
+    }
+  };
+
+  const handleFeatureSearch = async (val) => {
+    const searchTerm = val.value;
+    try {
+      const response = await axios.get(
+        `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/features/${searchTerm}`
+      );
+      const data = response.data;
+      if (data === "") {
+        setFeatureOptions([]);
+      } else {
+        setFeatureOptions(data);
+      }
+    } catch (error) {
+      // console.error("Error:", error);
+    }
+  };
 
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
 
-  const handleRemoveSubfeatures = (id) => {
-    const updatedSubFeatures = featureState.subFeatures.filter(
-      (item) => item.featureId !== id
-    );
-    setFeatureState({ ...featureState, subFeatures: updatedSubFeatures });
-  };
-
   const handleEditSubmit = () => {
     const updatedData = {
       ...featureForm,
-      subFeatures: featureState?.subFeatures,
+      subFeatures: featureState?.subFeatures.map(({ featureId }) => featureId),
+      roles: featureState?.roles.map(({ roleId }) => roleId),
       featureId: params?.id,
     };
     console.log(updatedData);
+    navigate(0);
   };
 
-  const params = useParams();
+  const handleRoleChange = (id, value) => {
+    let updatedRoles = featureState.roles;
+    if (id) {
+      updatedRoles = updatedRoles.filter((item) => item.roleId !== id);
+    } else {
+      updatedRoles = updatedRoles.push(value);
+    }
+    setFeatureState({ ...featureState, roles: updatedRoles });
+  };
+
+  const handleSubfeatureChange = (id, value) => {
+    let updatedSubfeatures = featureState.roles;
+    if (id) {
+      updatedSubfeatures = updatedSubfeatures.filter(
+        (item) => item.featureId !== id
+      );
+    } else {
+      updatedSubfeatures = updatedSubfeatures.push(value);
+    }
+    setFeatureState({ ...featureState, roles: updatedSubfeatures });
+  };
+
+  useEffect(() => {
+    if (params?.id) {
+      const data = primaryFeatures.find((f) => f.featureId === params.id);
+      setFeatureState(data);
+    }
+  }, [params]);
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -63,13 +123,6 @@ export default function FeatureDetail() {
   //   fetchData();
   // }, [params]);
 
-  useEffect(() => {
-    if (params?.id) {
-      const data = primaryFeatures.find((f) => f.featureId === params.id);
-      setFeatureState(data);
-    }
-  }, [params]);
-
   return (
     <>
       <PageHeader />
@@ -83,6 +136,27 @@ export default function FeatureDetail() {
           handleSaveChanges={handleEditSubmit}
         />
         <h3 className="tw-text-lg tw-font-bold tw-mt-8 tw-mb-6">Roles</h3>
+        {isEditable && (
+          <div
+            className="tw-mt-2.5 tw-w-1/3 tw-mb-4"
+            onChange={(e) => handleRoleSearch(e.target)}
+          >
+            <Dropdown
+              id={"role"}
+              className={"col-span-6"}
+              label={"Select Roles"}
+              type="select"
+              options={roleOptions}
+              setSelectedOption={(value) => {
+                if (value.code) handleRoleChange("", value);
+              }}
+              disabledSelect={true}
+              name={"roleName"}
+              code={"roleId"}
+              selectArrow={"greyArrow"}
+            />
+          </div>
+        )}
         <div className="tw-mb-6">
           {featureState?.roles?.length > 0 &&
             featureState?.roles.map((item) => (
@@ -90,6 +164,7 @@ export default function FeatureDetail() {
                 label={item.roleName}
                 key={item.roleId}
                 isEditable={isEditable}
+                handleDelete={() => handleRoleChange(item.roleId, "")}
               />
             ))}
         </div>
@@ -102,6 +177,27 @@ export default function FeatureDetail() {
             Add Sub Feature
           </button>
         </div>
+        {isEditable && (
+          <div
+            className="tw-mt-2.5 tw-w-1/3 tw-mb-4"
+            onChange={(e) => handleFeatureSearch(e.target)}
+          >
+            <Dropdown
+              id={"subRole"}
+              className={"col-span-6"}
+              label={"Select Sub Features"}
+              type="select"
+              options={featureOptions}
+              setSelectedOption={(value) => {
+                if (value.code) handleSubfeatureChange("", value);
+              }}
+              disabledSelect={true}
+              name={"featureName"}
+              code={"featureId"}
+              selectArrow={"greyArrow"}
+            />
+          </div>
+        )}
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
             <Accordion
@@ -114,7 +210,7 @@ export default function FeatureDetail() {
                   state: state,
                 });
               }}
-              handleDelete={() => handleRemoveSubfeatures(item.featureId)}
+              handleDelete={() => handleSubfeatureChange(item.featureId, "")}
             >
               <SubFeatureContent
                 item={item}

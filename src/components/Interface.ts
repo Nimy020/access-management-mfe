@@ -13,6 +13,7 @@ export interface ModalProps {
   title?: string;
 }
 export interface PillsProps {
+  handleDelete?: any;
   label?: string;
   onChange?: any;
   isEditable?: any;
