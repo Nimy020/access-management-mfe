@@ -73,7 +73,7 @@ export default function FeatureDetail() {
   return (
     <>
       <PageHeader />
-      <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36">
+      <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <FeatureHead
           setModalState={setModalState}
           featureState={featureState}
@@ -82,7 +82,7 @@ export default function FeatureDetail() {
           handleChange={handleUpdateFeatureChange}
           handleSaveChanges={handleEditSubmit}
         />
-        <h3 className="tw-text-base tw-font-bold tw-my-4">Roles</h3>
+        <h3 className="tw-text-lg tw-font-bold tw-mt-8 tw-mb-6">Roles</h3>
         <div className="tw-mb-6">
           {featureState?.roles?.length > 0 &&
             featureState?.roles.map((item) => (
@@ -93,12 +93,20 @@ export default function FeatureDetail() {
               />
             ))}
         </div>
-        <hr className="tw-border-b-2 tw-border-b-black tw-my-10" />
-        <h3 className="tw-text-lg tw-font-bold  tw-mb-4">Sub Features</h3>
+        <div className="tw-flex tw-justify-between tw-items-baseline tw-mt-16  tw-mb-6">
+          <h3 className="tw-text-lg tw-font-bold ">Sub Features</h3>
+          <button
+            className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
+            onClick={() => setModalState({ isOpen: true, action: "add" })}
+          >
+            Add Sub Feature
+          </button>
+        </div>
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
             <Accordion
               title={item.featureName}
+              subTitle={item.featureDescription}
               key={item.featureId}
               isEditable={isEditable}
               handleLink={() => {

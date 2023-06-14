@@ -61,7 +61,7 @@ export default function AccessManagement() {
   return (
     <>
       <PageHeader />
-      <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36">
+      <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative">
         <FeatureHead
           setModalState={setModalState}
           featureState={featureState}
@@ -69,10 +69,17 @@ export default function AccessManagement() {
           isEditable={isEditable}
           handleChange={handleUpdateFeatureChange}
         />
+        <button
+          className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5 tw-absolute tw-top-10 tw-right-5 tw-sm:tw-right-16 tw-lg:tw-right-36"
+          onClick={() => setModalState({ isOpen: true, action: "add" })}
+        >
+          Add Sub Feature
+        </button>
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
             <Accordion
               title={item.featureName}
+              subTitle={item.featureDescription}
               key={item.featureId}
               handleLink={() => {
                 navigate(`/access-management/feature/${item.featureId}`, {

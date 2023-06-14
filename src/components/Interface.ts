@@ -1,5 +1,6 @@
 export interface AccordianProps {
   title?: string;
+  subTitle?: string;
   children?: JSX.Element;
   isEditable?: boolean;
   handleDelete?: any;

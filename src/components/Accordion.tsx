@@ -8,6 +8,7 @@ const Accordion = ({
   isEditable,
   handleDelete,
   handleLink,
+  subTitle,
 }: AccordianProps): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -20,11 +21,16 @@ const Accordion = ({
     if (isEditable) setIsOpen(false);
   }, [isEditable]);
   return (
-    <div className="tw-border-t-2 tw-border-b tw-pt-5 tw-pb-8">
+    <div className=" tw-border-b tw-pt-4 tw-pb-4">
       <div className="tw-flex tw-justify-between tw-items-start">
-        <h3 className="tw-text-normal tw-font-bold" onClick={toggleAccordion}>
+        <h3 className="tw-text-sm tw-font-bold" onClick={toggleAccordion}>
           {title}
         </h3>
+        {!isOpen && (
+          <span className="tw-text-sm tw-font-normal tw-w-1/2 tw-truncate">
+            {subTitle}
+          </span>
+        )}
         {isOpen && <div className="tw-w-1/2">{children}</div>}
         <div className="tw-flex tw-w-[55px] tw-gap-4 tw-justify-end">
           {isEditable && (

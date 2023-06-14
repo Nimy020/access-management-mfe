@@ -42,12 +42,6 @@ const FeatureHead = ({
                   </button>
                 </>
               )}
-              <button
-                className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
-                onClick={() => setModalState({ isOpen: true, action: "add" })}
-              >
-                Add Sub Feature
-              </button>
             </div>
           </>
         )}

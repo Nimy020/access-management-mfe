@@ -7,9 +7,9 @@ export default function SubFeatureContent({
 }: SubFeatureContentProps): JSX.Element {  
   return (
     <div className="tw-max-w-2xl">
-      <p>{item.featureDescription}</p>
+      <p className="tw-text-sm">{item.featureDescription}</p>
       <div className="tw-mt-7">
-        <h3 className="tw-text-base tw-font-bold">Roles</h3>
+        <h3 className="tw-text-sm tw-font-bold tw-pb-4">Roles</h3>
         <div>
           {item?.roles?.length > 0 &&
             item?.roles?.map((role) => (
@@ -22,7 +22,7 @@ export default function SubFeatureContent({
       </div>
       <div className="tw-mt-7">
         <div className="tw-basis-1/2">
-          <h3 className="tw-text-base tw-font-bold">Sub features</h3>
+          <h3 className="tw-text-sm tw-font-bold tw-pb-4">Sub features</h3>
         </div>
         <div className="tw-basis-1/2 tw-flex">
           <div className="">
