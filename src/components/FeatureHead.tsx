@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { FeatureHeadProps } from "./Interface";
 
 const FeatureHead = ({
@@ -8,8 +9,12 @@ const FeatureHead = ({
   handleChange,
   handleSaveChanges,
 }: FeatureHeadProps): JSX.Element => {
+  const navigate = useNavigate();
+
   const handleFeatureDelete = () => {
-    console.log("deleted");
+    if (confirm("Are you sure you want to delete this feature?")) {
+      navigate("/access-management/feature");
+    }
   };
 
   return (
