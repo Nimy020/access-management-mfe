@@ -1,87 +1,59 @@
+import { useParams } from "react-router-dom";
 import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
-// import primaryFeatures from "../demo.json";
+import primaryFeatures from "../demo.json";
 import axios from "axios";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
-import { LocationState } from "../components/Interface";
 import { useNavigate } from "react-router-dom";
+import { LocationState } from "../components/Interface";
 
-export default function AccessManagement() {
+export default function RoleDetail() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [featureState, setFeatureState] = useState({
     subFeatures: null,
     featureId: null,
     featureName: null,
-    featureDescription: null,
   });
-  const [isEditable, setIsEditable] = useState(false);
-  const [featureForm, setFeatureForm] = useState({});
 
-  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
 
-  const handleUpdateFeatureChange = (fieldName, fieldValue) => {
-    setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
-  };
 
-  // useEffect(() => {
-  //   setFeatureState({
-  //     featureId: "",
-  //     featureName: "Primary Features",
-  //     featureDescription: "Listed below primary features of CSC",
-  //     subFeatures: primaryFeatures,
-  //   });
-  // }, []);
   const state: LocationState = { featureName: featureState?.featureName };
 
   const navigate = useNavigate();
+
+  const params = useParams();
 
   useEffect(() => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/primaryfeatures"
+          `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/features/${params.id}`
         );
-        setFeatureState({
-          featureId: "",
-          featureName: "Primary Features",
-          featureDescription:
-            "Listed below are primary feature of the cec platform admin management",
-          subFeatures: response.data,
-        });
+        setFeatureState(response.data);
         console.log(response.data);
       } catch (error) {
         console.error(error);
       }
     }
     fetchData();
-  }, []);
+  }, [params]);
 
   return (
     <>
       <PageHeader />
-      <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative">
+      <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <FeatureHead
           setModalState={setModalState}
           featureState={featureState}
-          setIsEditable={setIsEditable}
-          isEditable={isEditable}
-          handleChange={handleUpdateFeatureChange}
         />
-        <button
-          className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5 tw-absolute tw-top-10 tw-right-5 tw-sm:tw-right-16 tw-lg:tw-right-36"
-          onClick={() => setModalState({ isOpen: true, action: "add" })}
-        >
-          Add Sub Feature
-        </button>
         {featureState?.subFeatures?.length > 0 &&
           featureState?.subFeatures.map((item) => (
             <Accordion
               title={item.featureName}
-              subTitle={item.featureDescription}
               key={item.featureId}
               handleLink={() => {
                 navigate(`/access-management/feature/${item.featureId}`, {
@@ -92,7 +64,6 @@ export default function AccessManagement() {
               <SubFeatureContent
                 item={item}
                 featureName={featureState?.featureName}
-                handleChange={handleUpdateFeatureChange}
               />
             </Accordion>
           ))}
@@ -102,7 +73,10 @@ export default function AccessManagement() {
         title={"Create New Feature"}
         onClose={() => setModalState({ isOpen: false, action: "" })}
       >
-        <CreateNewFeature setModalState={setModalState} featureId={null} />
+        <CreateNewFeature
+          setModalState={setModalState}
+          featureId={featureState?.featureId}
+        />
       </Modal>
     </>
   );

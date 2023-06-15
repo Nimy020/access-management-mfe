@@ -1,26 +1,19 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState, useRef } from "react";
+import { SearchDropDownProps } from "./Interface";
 import customStyles from "./customStyles";
-// import { DropDownProps } from "./Interface";
 import tickMark from "./tickMark.svg";
 import blackArrow from "./select-arrow-black.svg";
 import greyArrow from "./select-arrow-grey.svg";
 import downArrow from "./down-arrow.svg";
+import debounce from 'lodash.debounce';
 
-const Dropdown = (props) => {
+const SearchDropDown = (props: SearchDropDownProps) => {
   const [optionsHeight, setOptionsHeight] = useState("auto");
   const optionsRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [filtered, setfiltered] = useState([]);
-
-  const filteredOptionsMethod = () => {
-    const filteredCountries = props.options?.filter((countryState) => {
-      const lowerCaseCountryState = countryState?.[props.name]?.toLowerCase();
-      const lowerCaseInputValue = props.defaultValue?.toLowerCase();
-      return lowerCaseCountryState?.includes(lowerCaseInputValue);
-    });
-    return filteredCountries;
-  };
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -47,6 +40,31 @@ const Dropdown = (props) => {
     };
   }, [ref]);
 
+   
+   const debouncedChangeHandler = debounce((value) => {
+    console.log('Debounced value:', value);
+    handleDropDownChange(searchValue);    
+  }, 300); // Set the desired debounce delay (e.g., 300 milliseconds)
+
+  const handleChange = (event) => {
+    const { value } = event.target;
+    setSearchValue(value);4
+    debouncedChangeHandler(value);
+  }
+
+  // useEffect(() => {
+  
+  //   handleDropDownChange(searchValue);
+  // }, [searchValue]);
+
+
+  const handleDropDownChange = async (inputValue) => {
+    const filterdOptions = await props.onChange({ code: "", name: inputValue });
+    console.log('filterdOptions', filterdOptions);
+    setIsOpen(true);
+    setfiltered(filterdOptions); 
+  }  
+
   const [tick, setTick] = useState(props.defaultValue);
   const images = {
     blackArrow: { src: blackArrow, alt: "blackArrow" },
@@ -54,10 +72,8 @@ const Dropdown = (props) => {
   };
 
   const handleValue = (nameWithCode) => {
-    props.setSelectedOption({
-      code: nameWithCode[props.code],
-      name: nameWithCode[props.name],
-    });
+
+    props.setSelectedOption(nameWithCode);
 
     setTick(nameWithCode[props.name]);
     setIsOpen(false);
@@ -68,6 +84,7 @@ const Dropdown = (props) => {
     const lowerCaseInputValue = inputValue?.toLowerCase();
     let inputIndex = 0;
     let formattedOption = "";
+    console.log("option1234", option);
 
     for (let i = 0; i < option?.length; i += 1) {
       if (
@@ -89,12 +106,7 @@ const Dropdown = (props) => {
       <input
         id={props?.id}
         data-testid={props?.id}
-        onChange={(e) => {
-          props.setSelectedOption({ code: "", name: e.target.value });
-          setIsOpen(true);
-          setfiltered(filteredOptionsMethod);
-          props?.onChange;
-        }}
+        onChange={handleChange}
         onFocus={
           props?.onFocus &&
           ((e) => {
@@ -103,8 +115,8 @@ const Dropdown = (props) => {
           })
         }
         className={`${customStyles.textBox.base} ${customStyles.dropdown.outlineBorder}`}
-        value={props.defaultValue}
-        defaultValue={props.defaultValue}
+        value={searchValue}
+        
         onClick={() => {
           setIsOpen(!isOpen);
           setfiltered([]);
@@ -127,7 +139,6 @@ const Dropdown = (props) => {
           )}
         </div>
       )}
-
       {(filtered?.length > 0 || props.options?.length > 0) && isOpen && (
         <ul
           className={customStyles.dropdown.optionListParent}
@@ -135,34 +146,32 @@ const Dropdown = (props) => {
           ref={optionsRef}
           data-testid="list-options"
         >
-          {(filtered?.length > 0 ? filtered : props.options).map(
-            (option, index) => (
-              <li
-                key={index}
-                value={option}
-                className={customStyles.dropdown.optionsList}
-                id={index}
-                onClick={() => {
-                  handleValue(option);
-                }}
-              >
+          {(filtered?.length > 0 ? filtered : props.options).map((option) => (
+            <li
+              key={option[props.code]}
+              value={option[props.name]}
+              className={customStyles.dropdown.optionsList}
+              id={option[props.code]}
+              onClick={() => {
+                handleValue(option);
+              }}
+            >
+              <div>
+                {renderOptionLabel(option[props.name], props.defaultValue)}
+              </div>
+              {tick === option[props.name] && props.defaultValue !== "" && (
                 <div>
-                  {renderOptionLabel(option[props.name], props.defaultValue)}
+                  <img
+                    className=""
+                    src={tickMark}
+                    alt={"tick"}
+                    role="presentation"
+                    data-testid={"tick"}
+                  />
                 </div>
-                {tick === option[props.name] && props.defaultValue !== "" && (
-                  <div>
-                    <img
-                      className=""
-                      src={tickMark}
-                      alt={"tick"}
-                      role="presentation"
-                      data-testid={"tick"}
-                    />
-                  </div>
-                )}
-              </li>
-            )
-          )}
+              )}
+            </li>
+          ))}
         </ul>
       )}
     </div>
@@ -187,4 +196,4 @@ const Dropdown = (props) => {
   );
 };
 
-export default Dropdown;
+export default SearchDropDown;

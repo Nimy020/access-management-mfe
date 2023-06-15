@@ -3,14 +3,14 @@ import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
-import primaryFeatures from "../demo.json";
+// import primaryFeatures from "../demo.json";
 import axios from "axios";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
 import Pills from "../components/Pills";
 import { LocationState } from "../components/Interface";
-import Dropdown from "../components/Dropdown/Dropdown";
+import SearchDropDown from "../components/SearchDropDown/SearchDropDown";
 
 export default function FeatureDetail() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
@@ -24,12 +24,6 @@ export default function FeatureDetail() {
   const [featureForm, setFeatureForm] = useState({});
   const [roleOptions, setRoleOptions] = useState([]);
   const [featureOptions, setFeatureOptions] = useState([]);
-  const [initialFeatureState, setInitialFeatureState] = useState({
-    subFeatures: null,
-    featureId: null,
-    featureName: null,
-    roles: null,
-  });
 
   const state: LocationState = { featureName: featureState?.featureName };
 
@@ -44,6 +38,7 @@ export default function FeatureDetail() {
       );
       const data = response.data;
       if (data === "") {
+        console.log(data);
         setRoleOptions([]);
       } else {
         setRoleOptions(data);
@@ -72,6 +67,13 @@ export default function FeatureDetail() {
 
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
+  };
+
+  const handleRemoveSubfeatures = (id) => {
+    const updatedSubFeatures = featureState.subFeatures.filter(
+      (item) => item.featureId !== id
+    );
+    setFeatureState({ ...featureState, subFeatures: updatedSubFeatures });
   };
 
   const handleEditSubmit = () => {
@@ -103,8 +105,7 @@ export default function FeatureDetail() {
   };
 
   const handleSubfeatureChange = (id, value) => {
-    console.log(id, value);
-    let updatedSubfeatures = [...featureState.subFeatures];
+    let updatedSubfeatures = [...featureState.roles];
     if (id) {
       updatedSubfeatures = updatedSubfeatures.filter(
         (item) => item.featureId !== id
@@ -123,47 +124,38 @@ export default function FeatureDetail() {
   };
 
   useEffect(() => {
-    if (params?.id) {
-      const data = primaryFeatures.find((f) => f.featureId === params.id);
-      setInitialFeatureState(data);
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/features/${params.id}`
+        );
+        setFeatureState(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
     }
+    fetchData();
   }, [params]);
 
-  useEffect(() => {
-    setFeatureState(initialFeatureState);
-  }, [initialFeatureState]);
-
   // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await axios.get(
-  //         `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/features/${params.id}`
-  //       );
-  //       setFeatureState(response.data);
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
+  //   if (params?.id) {
+  //     const data = primaryFeatures.find((f) => f.featureId === params.id);
+  //     setFeatureState(data);
   //   }
-  //   fetchData();
   // }, [params]);
-
-  const handleCancel = () => {
-    setIsEditable(false);
-    setFeatureState(initialFeatureState);
-  };
 
   return (
     <>
       <PageHeader />
       <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <FeatureHead
+          setModalState={setModalState}
           featureState={featureState}
           setIsEditable={setIsEditable}
           isEditable={isEditable}
           handleChange={handleUpdateFeatureChange}
           handleSaveChanges={handleEditSubmit}
-          handleCancel={handleCancel}
         />
         <h3 className="tw-text-lg tw-font-bold tw-mt-8 tw-mb-6">Roles</h3>
         {isEditable && (
@@ -171,7 +163,7 @@ export default function FeatureDetail() {
             className="tw-mt-2.5 tw-w-1/3 tw-mb-4"
             onChange={(e) => handleRoleSearch(e.target)}
           >
-            <Dropdown
+            <SearchDropDown
               id={"role"}
               className={"col-span-6"}
               label={"Select Roles"}
@@ -184,7 +176,7 @@ export default function FeatureDetail() {
               name={"roleName"}
               code={"roleId"}
               selectArrow={"greyArrow"}
-              value={""}
+              
             />
           </div>
         )}
@@ -213,7 +205,7 @@ export default function FeatureDetail() {
             className="tw-mt-2.5 tw-w-1/3 tw-mb-4"
             onChange={(e) => handleFeatureSearch(e.target)}
           >
-            <Dropdown
+            <SearchDropDown
               id={"subRole"}
               className={"col-span-6"}
               label={"Select Sub Features"}
@@ -222,11 +214,11 @@ export default function FeatureDetail() {
               setSelectedOption={(value) => {
                 if (value.code) handleSubfeatureChange("", value);
               }}
-              value=""
               disabledSelect={true}
               name={"featureName"}
               code={"featureId"}
               selectArrow={"greyArrow"}
+              
             />
           </div>
         )}
@@ -255,10 +247,7 @@ export default function FeatureDetail() {
       <Modal
         isOpen={modalState.isOpen}
         title={"Create New Feature"}
-        onClose={() => {
-          setModalState({ isOpen: false, action: "" });
-          setFeatureForm({});
-        }}
+        onClose={() => setModalState({ isOpen: false, action: "" })}
       >
         <CreateNewFeature
           setModalState={setModalState}

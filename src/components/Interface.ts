@@ -17,17 +17,18 @@ export interface PillsProps {
   label?: string;
   onChange?: any;
   isEditable?: any;
+  pillId?: string
 }
 export interface CreateNewFeatureProps {
   setModalState?: any;
   featureId?: string;
 }
 export interface FeatureHeadProps {
+  setModalState?: any;
   setIsEditable?: any;
   isEditable?: boolean;
   handleChange?: any;
   handleSaveChanges?: any;
-  handleCancel?: any;
   //  Object type should be declared
   featureState?: any;
 }

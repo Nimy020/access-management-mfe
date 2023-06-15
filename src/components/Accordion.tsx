@@ -23,7 +23,10 @@ const Accordion = ({
   return (
     <div className=" tw-border-b tw-pt-4 tw-pb-4">
       <div className="tw-flex tw-justify-between tw-items-start">
-        <h3 className="tw-text-sm tw-font-bold" onClick={toggleAccordion}>
+        <h3
+          className="tw-w-1/4 tw-text-sm tw-font-bold"
+          onClick={toggleAccordion}
+        >
           {title}
         </h3>
         {!isOpen && (

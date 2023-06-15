@@ -3,28 +3,50 @@ import { FeatureHeadProps } from "./Interface";
 import axios from "axios";
 
 const FeatureHead = ({
+  setModalState,
   featureState,
   setIsEditable,
   isEditable,
   handleChange,
   handleSaveChanges,
-  handleCancel,
 }: FeatureHeadProps): JSX.Element => {
+  
   const navigate = useNavigate();
-
+  console.log(featureState);
   const handleFeatureDelete = () => {
+
+    console.log("Feature state in Feature head", featureState);
+
     if (confirm("Are you sure you want to delete this feature?")) {
+
       axios
+
         .delete(
+
           `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/feature/${featureState.featureId}`
+
         )
+
         .then((response) => {
-          navigate("/access-management/feature/");
+
+          console.log("Delete successful");
+
         })
+
         .catch((error) => {
+
           console.error("Error deleting:", error);
+
         });
+
+      sessionStorage.clear();
+
+      navigate("/access-management/feature/");
+
+      window.location.reload();
+
     }
+
   };
 
   return (
@@ -90,7 +112,7 @@ const FeatureHead = ({
               <button onClick={handleSaveChanges}>Save Changes</button>
               <button
                 className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
-                onClick={handleCancel}
+                onClick={() => setIsEditable(false)}
               >
                 Cancel
               </button>

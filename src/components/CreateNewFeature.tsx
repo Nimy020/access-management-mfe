@@ -1,9 +1,35 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { TextBox, Button } from "@sephora-csc/csc-component-library";
 import Dropdown from "../components/Dropdown/Dropdown";
 import { CreateNewFeatureProps } from "./Interface";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
+// const roles = [
+//   {
+//     roleId: "1",
+//     roleName: "csc_agent_tier1",
+//   },
+//   {
+//     roleId: "2",
+//     roleName: "csc_agent_tier2",
+//   },
+//   {
+//     roleId: "3",
+//     roleName: "csc_agent_tier3",
+//   },
+// ];
+
+// const subFeatures = [
+//   {
+//     featureId: null,
+//     featureName: "Order_personal_fields_name",
+//   },
+//   {
+//     featureId: null,
+//     featureName: "Order_personal_fields_email",
+//   },
+// ];
 
 const CreateNewFeature = ({
   setModalState,
@@ -18,7 +44,6 @@ const CreateNewFeature = ({
   const roleRef = useRef(null);
   const subFeatureRef = useRef(null);
   const navigate = useNavigate();
-
   const handleModalSubmit = () => {
     let formData;
     if (featureId)
