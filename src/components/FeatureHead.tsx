@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { FeatureHeadProps } from "./Interface";
+import axios from "axios";
 
 const FeatureHead = ({
   featureState,
@@ -13,7 +14,16 @@ const FeatureHead = ({
 
   const handleFeatureDelete = () => {
     if (confirm("Are you sure you want to delete this feature?")) {
-      navigate("/access-management/feature");
+      axios
+        .delete(
+          `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/feature/${featureState.featureId}`
+        )
+        .then((response) => {
+          navigate("/access-management/feature/");
+        })
+        .catch((error) => {
+          console.error("Error deleting:", error);
+        });
     }
   };
 

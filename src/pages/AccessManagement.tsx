@@ -50,7 +50,6 @@ export default function AccessManagement() {
   //           "Listed below are primary feature of the cec platform admin management",
   //         subFeatures: response.data,
   //       });
-  //       console.log(response.data);
   //     } catch (error) {
   //       console.error(error);
   //     }
