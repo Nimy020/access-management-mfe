@@ -23,11 +23,11 @@ export interface CreateNewFeatureProps {
   featureId?: string;
 }
 export interface FeatureHeadProps {
-  setModalState?: any;
   setIsEditable?: any;
   isEditable?: boolean;
   handleChange?: any;
   handleSaveChanges?: any;
+  handleCancel?: any;
   //  Object type should be declared
   featureState?: any;
 }

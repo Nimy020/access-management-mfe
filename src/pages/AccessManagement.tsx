@@ -63,7 +63,6 @@ export default function AccessManagement() {
       <PageHeader />
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative">
         <FeatureHead
-          setModalState={setModalState}
           featureState={featureState}
           setIsEditable={setIsEditable}
           isEditable={isEditable}
@@ -98,7 +97,10 @@ export default function AccessManagement() {
       <Modal
         isOpen={modalState.isOpen}
         title={"Create New Feature"}
-        onClose={() => setModalState({ isOpen: false, action: "" })}
+        onClose={() => {
+          setModalState({ isOpen: false, action: "" });
+          setFeatureForm({});
+        }}
       >
         <CreateNewFeature setModalState={setModalState} featureId={null} />
       </Modal>

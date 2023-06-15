@@ -24,6 +24,12 @@ export default function FeatureDetail() {
   const [featureForm, setFeatureForm] = useState({});
   const [roleOptions, setRoleOptions] = useState([]);
   const [featureOptions, setFeatureOptions] = useState([]);
+  const [initialFeatureState, setInitialFeatureState] = useState({
+    subFeatures: null,
+    featureId: null,
+    featureName: null,
+    roles: null,
+  });
 
   const state: LocationState = { featureName: featureState?.featureName };
 
@@ -96,7 +102,8 @@ export default function FeatureDetail() {
     setFeatureState({ ...featureState, roles: updatedRoles });
   };
 
-  const handleSubfeatureChange = (id, value) => {console.log(id,value)
+  const handleSubfeatureChange = (id, value) => {
+    console.log(id, value);
     let updatedSubfeatures = [...featureState.subFeatures];
     if (id) {
       updatedSubfeatures = updatedSubfeatures.filter(
@@ -118,9 +125,13 @@ export default function FeatureDetail() {
   useEffect(() => {
     if (params?.id) {
       const data = primaryFeatures.find((f) => f.featureId === params.id);
-      setFeatureState(data);
+      setInitialFeatureState(data);
     }
   }, [params]);
+
+  useEffect(() => {
+    setFeatureState(initialFeatureState);
+  }, [initialFeatureState]);
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -137,17 +148,22 @@ export default function FeatureDetail() {
   //   fetchData();
   // }, [params]);
 
+  const handleCancel = () => {
+    setIsEditable(false);
+    setFeatureState(initialFeatureState);
+  };
+
   return (
     <>
       <PageHeader />
       <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <FeatureHead
-          setModalState={setModalState}
           featureState={featureState}
           setIsEditable={setIsEditable}
           isEditable={isEditable}
           handleChange={handleUpdateFeatureChange}
           handleSaveChanges={handleEditSubmit}
+          handleCancel={handleCancel}
         />
         <h3 className="tw-text-lg tw-font-bold tw-mt-8 tw-mb-6">Roles</h3>
         {isEditable && (
@@ -239,7 +255,10 @@ export default function FeatureDetail() {
       <Modal
         isOpen={modalState.isOpen}
         title={"Create New Feature"}
-        onClose={() => setModalState({ isOpen: false, action: "" })}
+        onClose={() => {
+          setModalState({ isOpen: false, action: "" });
+          setFeatureForm({});
+        }}
       >
         <CreateNewFeature
           setModalState={setModalState}

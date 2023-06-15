@@ -2,12 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { FeatureHeadProps } from "./Interface";
 
 const FeatureHead = ({
-  setModalState,
   featureState,
   setIsEditable,
   isEditable,
   handleChange,
   handleSaveChanges,
+  handleCancel,
 }: FeatureHeadProps): JSX.Element => {
   const navigate = useNavigate();
 
@@ -80,7 +80,7 @@ const FeatureHead = ({
               <button onClick={handleSaveChanges}>Save Changes</button>
               <button
                 className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
-                onClick={() => setIsEditable(false)}
+                onClick={handleCancel}
               >
                 Cancel
               </button>
