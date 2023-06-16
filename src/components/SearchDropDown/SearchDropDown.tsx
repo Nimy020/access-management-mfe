@@ -6,7 +6,7 @@ import tickMark from "./tickMark.svg";
 import blackArrow from "./select-arrow-black.svg";
 import greyArrow from "./select-arrow-grey.svg";
 import downArrow from "./down-arrow.svg";
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
 
 const SearchDropDown = (props: SearchDropDownProps) => {
   const [optionsHeight, setOptionsHeight] = useState("auto");
@@ -40,30 +40,26 @@ const SearchDropDown = (props: SearchDropDownProps) => {
     };
   }, [ref]);
 
-   
-   const debouncedChangeHandler = debounce((value) => {
-    console.log('Debounced value:', value);
-    handleDropDownChange(searchValue);    
+  const debouncedChangeHandler = debounce((value) => {
+    handleDropDownChange(searchValue);
   }, 300); // Set the desired debounce delay (e.g., 300 milliseconds)
 
   const handleChange = (event) => {
     const { value } = event.target;
-    setSearchValue(value);4
+    setSearchValue(value);
     debouncedChangeHandler(value);
-  }
+  };
 
   // useEffect(() => {
-  
+
   //   handleDropDownChange(searchValue);
   // }, [searchValue]);
 
-
   const handleDropDownChange = async (inputValue) => {
     const filterdOptions = await props.onChange({ code: "", name: inputValue });
-    console.log('filterdOptions', filterdOptions);
     setIsOpen(true);
-    setfiltered(filterdOptions); 
-  }  
+    setfiltered(filterdOptions);
+  };
 
   const [tick, setTick] = useState(props.defaultValue);
   const images = {
@@ -72,7 +68,6 @@ const SearchDropDown = (props: SearchDropDownProps) => {
   };
 
   const handleValue = (nameWithCode) => {
-
     props.setSelectedOption(nameWithCode);
 
     setTick(nameWithCode[props.name]);
@@ -84,7 +79,6 @@ const SearchDropDown = (props: SearchDropDownProps) => {
     const lowerCaseInputValue = inputValue?.toLowerCase();
     let inputIndex = 0;
     let formattedOption = "";
-    console.log("option1234", option);
 
     for (let i = 0; i < option?.length; i += 1) {
       if (
@@ -116,7 +110,6 @@ const SearchDropDown = (props: SearchDropDownProps) => {
         }
         className={`${customStyles.textBox.base} ${customStyles.dropdown.outlineBorder}`}
         value={searchValue}
-        
         onClick={() => {
           setIsOpen(!isOpen);
           setfiltered([]);
@@ -161,13 +154,13 @@ const SearchDropDown = (props: SearchDropDownProps) => {
               </div>
               {tick === option[props.name] && props.defaultValue !== "" && (
                 <div>
-                  <img
+                  {/* <img
                     className=""
                     src={tickMark}
                     alt={"tick"}
                     role="presentation"
                     data-testid={"tick"}
-                  />
+                  /> */}
                 </div>
               )}
             </li>

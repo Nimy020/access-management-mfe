@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import deleteIcon from "../assets/delete.svg";
 import { AccordianProps } from "./Interface";
-import editIcon from "../assets/pencil.svg";
+import editIcon from "../assets/view-edit.svg";
 const Accordion = ({
   title,
   children,
@@ -21,10 +21,10 @@ const Accordion = ({
     if (isEditable) setIsOpen(false);
   }, [isEditable]);
   return (
-    <div className=" tw-border-b tw-pt-4 tw-pb-4">
+    <div className=" tw-border-b tw-pt-6 tw-pb-6">
       <div className="tw-flex tw-justify-between tw-items-start">
         <h3
-          className="tw-w-1/4 tw-text-sm tw-font-bold"
+          className="tw-w-1/6 tw-text-sm tw-font-bold"
           onClick={toggleAccordion}
         >
           {title}
@@ -35,10 +35,13 @@ const Accordion = ({
           </span>
         )}
         {isOpen && <div className="tw-w-1/2">{children}</div>}
-        <div className="tw-flex tw-w-[55px] tw-gap-4 tw-justify-end">
+        <div className="tw-flex tw-w-[74px] tw-gap-4 tw-justify-end">
           {isEditable && (
-            <button onClick={handleDelete}>
-              <img className="tw-w-[20px]" src={deleteIcon} alt="" />
+            <button
+              onClick={handleDelete}
+              className="tw-w-[74px] tw-h-[36px] tw-bg-[#EEEEEE] tw-text-sm tw-text-[#666666] tw-rounded-full"
+            >
+              Delete
             </button>
           )}
 

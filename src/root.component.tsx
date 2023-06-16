@@ -9,10 +9,10 @@ export default function Root(props) {
       <Routes>
         <Route
           path="*"
-          element={<Navigate to="/access-management/feature" />}
+          element={<Navigate to="/access-management/" />}
         />
         <Route
-          path={"/access-management/feature"}
+          path={"/access-management/"}
           element={<AccessManagement />}
         />
         <Route

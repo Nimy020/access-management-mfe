@@ -21,7 +21,7 @@ export default function RoleDetail() {
 
 
 
-  const state: LocationState = { featureName: featureState?.featureName };
+  const state: LocationState = { name: featureState?.featureName };
 
   const navigate = useNavigate();
 
@@ -30,11 +30,11 @@ export default function RoleDetail() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(
-          `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/features/${params.id}`
-        );
-        setFeatureState(response.data);
-        console.log(response.data);
+        // const response = await axios.get(
+        //   `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/features/${params.id}`
+        // );
+        // setFeatureState(response.data);
+        // console.log(response.data);
       } catch (error) {
         console.error(error);
       }

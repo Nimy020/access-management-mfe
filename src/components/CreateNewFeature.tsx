@@ -1,147 +1,178 @@
-import { useCallback, useRef, useState } from "react";
-import { TextBox, Button } from "@sephora-csc/csc-component-library";
-import Dropdown from "../components/Dropdown/Dropdown";
+import { useRef, useState } from "react";
+import { TextBox, Dropdown, Button } from "@sephora-csc/csc-component-library";
 import { CreateNewFeatureProps } from "./Interface";
+import SearchDropDown  from "./SearchDropDown/SearchDropDown";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import Pills from "./Pills";
+import { useNavigate } from "react-router-dom";
 
-// const roles = [
-//   {
-//     roleId: "1",
-//     roleName: "csc_agent_tier1",
-//   },
-//   {
-//     roleId: "2",
-//     roleName: "csc_agent_tier2",
-//   },
-//   {
-//     roleId: "3",
-//     roleName: "csc_agent_tier3",
-//   },
+// const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+//   // {
+//   //   roleId: "1",
+//   //   roleName: "csc_agent_tier1",
+//   // },
+//   // {
+//   //   roleId: "2",
+//   //   roleName: "csc_agent_tier2",
+//   // },
+//   // {
+//   //   roleId: "3",
+//   //   roleName: "csc_agent_tier3",
+//   // },
 // ];
 
 // const subFeatures = [
-//   {
-//     featureId: null,
-//     featureName: "Order_personal_fields_name",
-//   },
-//   {
-//     featureId: null,
-//     featureName: "Order_personal_fields_email",
-//   },
+//   // {
+//   //   featureId: null,
+//   //   featureName: "Order_personal_fields_name",
+//   // },
+//   // {
+//   //   featureId: null,
+//   //   featureName: "Order_personal_fields_email",
+//   // },
 // ];
 
 const CreateNewFeature = ({
   setModalState,
   featureId,
 }: CreateNewFeatureProps): JSX.Element => {
+  const [roles, setRoles] = useState([]);
+  const [subFeatures, setSubFeatures] = useState([]);
+  const navigate = useNavigate();
+
   const [modalForm, setModalForm] = useState({
-    roles: null,
-    subFeatures: null,
-    featureDescription: null,
-    featureName: null,
+    featureName: "",
+    featureDescription: "",
+    roles: [],
+    subFeatures: [],
   });
   const roleRef = useRef(null);
   const subFeatureRef = useRef(null);
-  const navigate = useNavigate();
+
   const handleModalSubmit = () => {
     let formData;
-    if (featureId)
-      formData = {
-        ...modalForm,
-        roleIds: [selectedRole],
-        subFeatures: [selectedFeature],
-        parentFeatureId: featureId,
-      };
-    else
-      formData = {
-        ...modalForm,
-        roleIds: [selectedRole],
-        subFeatures: [selectedFeature],
-        parentFeatureId: "",
-      };
-    const POST_DATA = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    };
+    console.log('submit Modalform', modalForm);
+    const roleIds = modalForm?.roles?.map(role => {
+        return role.roleId;
+    });
 
-    if (
-      modalForm.roles === null ||
-      modalForm.subFeatures === null ||
-      modalForm.featureDescription === null ||
-      modalForm.featureName === null
-    ) {
-      setError("please fill all fields");
-    } else if (modalForm.roles.code == "" || modalForm.subFeatures.code == "") {
-      setError("please enter valid role or sub feature");
-    } else {
-      setError("");
-      let apiUrl = `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/feature/`;
-      fetch(apiUrl, POST_DATA)
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error("Request failed with status " + response.status);
-          }
-        })
-        .then((responseData) => {
-          setModalState({ isOpen: false, action: "" });
-          navigate(0);
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+    const subFeaturesIds = modalForm?.subFeatures?.map(feature => {
+      return feature.featureId;
+  });
+    const parentFeatureId = featureId?featureId:"";
+    const newFeatureData = {
+      parentFeatureId: featureId,
+      featureName: modalForm.featureName,
+      featureDescription: modalForm.featureDescription,
+      roleIds: roleIds,
+      subFeatures: subFeaturesIds
     }
+
+   const api_headers_Data = {
+    "Content-Type": "application/json",
+   };
+
+
+    // const postAsyncData = async () => {
+    //   try {
+    //     const response = await axios.post(CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature", newFeatureData, {headers:  api_headers_Data });
+    //     console.log('POST request successful:', response.data);
+    //     setModalState({ isOpen: false, action: "" });
+    //     navigate(0);
+    //   } catch (error) {
+    //     console.error('Error during POST request:', error);
+    //   }
+    // };
+
+    // postAsyncData();
+    
+    
   };
 
   const handleFormChange = (fieldName, fieldValue) => {
-    setModalForm({ ...modalForm, [fieldName]: fieldValue });
+    let updatedForm = fieldValue;
+    if(Array.isArray(modalForm[fieldName])) {
+      updatedForm = modalForm[fieldName];
+      updatedForm?.push(fieldValue)
+    } 
+    
+    console.log('modalForm on change', modalForm);
+    setModalForm({ ...modalForm, [fieldName]:  updatedForm});
+    console.log('modalForm  on change', modalForm);
   };
 
-  const [error, setError] = useState("");
-  const [options, setOptions] = useState([]);
-  const [subOptions, subsetOptions] = useState([]);
-  const [selectedRole, setSelectedRole] = useState([]);
-  const [selectedFeature, setSelectedFeature] = useState([]);
-  const handleSearchTermChange = async (val) => {
-    const searchTerm = val.value;
-    try {
-      const response = await axios.get(
-        `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/roles/${searchTerm}`
-      );
-      const data = response.data;
-      if (data === "") {
-        setOptions([]);
-      } else {
-        setOptions(data);
+  const handleSelectedRoleDelete = (selectedRoleID) => {
+    console.log('deleting selected Role', selectedRoleID);
+      if (selectedRoleID) {
+        const updatedRoles = modalForm?.roles?.filter((value) => value.roleId !== selectedRoleID);  
+        setModalForm({ ...modalForm, roles:  updatedRoles});
       }
+  }
+
+  const handleSelectedFeatureDelete = (selectedFeatureId) => {
+    console.log('deleting selected feature', selectedFeatureId);
+      if (selectedFeatureId) {
+        const updatedFeatures = modalForm?.subFeatures?.filter((value) => value.featureId !== selectedFeatureId);  
+        setModalForm({ ...modalForm, subFeatures:  updatedFeatures});
+      }
+  }
+
+  const handleRoleDropDownChange = async (inputValue) => {
+    try {
+      console.log(inputValue);
+      if (inputValue?.name) {
+        // const response = await axios.get(
+        //   CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
+        // );
+        // console.log('handleFeatureDropDownChange', response.data);
+        // let filteredData = [];
+        // if (response?.data) {
+          
+        //   console.log('filteredData', response?.data);
+        //   return response?.data;
+        // }
+
+        
+      } else {
+        return null;
+      }
+      
     } catch (error) {
-      // console.error("Error:", error);
+      console.error(error);
     }
+    return null;
   };
 
-  const handleSubFeature = async (val) => {
-    const searchTerm = val.value;
+  const handleFeatureDropDownChange = async (inputValue) => {
     try {
-      const response = await axios.get(
-        `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/features/${searchTerm}`
-      );
-      const data = response.data;
-      if (data === "") {
-        subsetOptions([]);
+      console.log(inputValue);
+      if (inputValue?.name) {
+        // const response = await axios.get(
+        //   CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/features/" + inputValue.name
+        // );
+        // console.log('handleFeatureDropDownChange', response.data);
+        // let filteredData = [];
+        // if (response?.data) {
+          
+        //   return response?.data;
+        // }
+        
       } else {
-        subsetOptions(data);
+        return null;
       }
+      
     } catch (error) {
-      // console.error("Error:", error);
+      console.error(error);
     }
+    return null;
   };
+
   return (
     <>
+      <div className=" tw-mt-5 tw-text-center tw-text-[#676567] tw-opacity-100">
+        Sed eu semper ligula. Proin dapibus nunc quis ligula ullamcorper
+        venenatis. Nulla mollis sagittis
+      </div>
       <div className="tw-mt-5">
         <TextBox
           label="Feature Name"
@@ -161,49 +192,66 @@ const CreateNewFeature = ({
         </span>
       </div>
       <div className="tw-mt-4 tw-font-bold">{"Roles"}</div>
-      <div
-        className="tw-mt-2.5"
-        onChange={(e) => handleSearchTermChange(e.target)}
-      >
-        <Dropdown
+      <div className="tw-mt-2.5">
+        <SearchDropDown
           id={"role"}
           className={"col-span-6"}
           label={"Select Roles"}
           type="select"
-          options={options}
-          setSelectedOption={(value) => {
-            setSelectedRole(value.code);
-            handleFormChange("roles", value);
-          }}
-          defaultValue={modalForm.roles?.name || ""}
+          options={roles}
+          setSelectedOption={(value) => handleFormChange("roles", value)}
           dropDownRef={roleRef}
           disabledSelect={true}
           name={"roleName"}
           code={"roleId"}
           selectArrow={"greyArrow"}
+          onChange={handleRoleDropDownChange}
+          defaultValue={""}    
+
         />
       </div>
+
+      <div className="tw-mt-2.5">
+          <div className="">
+            {console.log('modalForm1234:',modalForm )}
+            {modalForm?.roles?.length > 0 &&
+              modalForm?.roles?.map((sf) => (
+                <Pills key={sf.roleId} label={sf.roleName}  isEditable= {true}
+                handleDelete =  {handleSelectedRoleDelete} pillId ={sf.roleId}/>
+              ))}
+          </div>
+        </div>
+
+
       <div className="tw-mt-4 tw-font-bold">{"Subfeatures"}</div>
-      <div className="tw-mt-2.5" onChange={(e) => handleSubFeature(e.target)}>
-        <Dropdown
+      <div className="tw-mt-2.5">
+        <SearchDropDown
           id={"subRole"}
           className={"col-span-6"}
           label={"Select Sub Features"}
           type="select"
-          options={subOptions}
-          setSelectedOption={(value) => {
-            setSelectedFeature(value.code);
-            handleFormChange("subFeatures", value);
-          }}
-          defaultValue={modalForm.subFeatures?.name || ""}
+          options={subFeatures}
+          setSelectedOption={(value) => handleFormChange("subFeatures", value)}
+          defaultValue={""}          
           dropDownRef={subFeatureRef}
           disabledSelect={true}
           name={"featureName"}
           code={"featureId"}
           selectArrow={"greyArrow"}
+          onChange={handleFeatureDropDownChange}
         />
       </div>
-      {error && <div className="tw-text-red"> {error}</div>}
+
+      <div className="tw-mt-2.5">
+          <div className="">
+            {console.log('modalForm1234:',modalForm )}
+            {modalForm?.subFeatures?.length > 0 &&
+              modalForm?.subFeatures?.map((sf) => (
+                <Pills key={sf.featureId} label={sf.featureName} isEditable={true}  handleDelete =  {handleSelectedFeatureDelete} pillId={sf.featureId}/>
+              ))}
+          </div>
+        </div>
+
       <div className="tw-mt-[30px]  tw-text-center">
         <Button
           label={"Submit"}

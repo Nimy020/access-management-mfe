@@ -17,7 +17,7 @@ export interface PillsProps {
   label?: string;
   onChange?: any;
   isEditable?: any;
-  pillId?: string
+  pillId?: string;
 }
 export interface CreateNewFeatureProps {
   setModalState?: any;
@@ -31,6 +31,7 @@ export interface FeatureHeadProps {
   handleSaveChanges?: any;
   //  Object type should be declared
   featureState?: any;
+  handleCancel?: any;
 }
 export interface SubFeatureContentProps {
   //  Object type should be declared
@@ -39,5 +40,7 @@ export interface SubFeatureContentProps {
   handleChange?: any;
 }
 export type LocationState = {
-  featureName: string;
+  name: string;
+  id?: string;
+  type?: string;
 };

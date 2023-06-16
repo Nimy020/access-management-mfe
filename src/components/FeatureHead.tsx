@@ -9,44 +9,25 @@ const FeatureHead = ({
   isEditable,
   handleChange,
   handleSaveChanges,
+  handleCancel,
 }: FeatureHeadProps): JSX.Element => {
-  
   const navigate = useNavigate();
-  console.log(featureState);
   const handleFeatureDelete = () => {
-
-    console.log("Feature state in Feature head", featureState);
-
     if (confirm("Are you sure you want to delete this feature?")) {
+      // axios
 
-      axios
+      //   .delete(
+      //     `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/feature/${featureState.featureId}`
+      //   )
 
-        .delete(
+      //   .then((response) => {
+          navigate("/access-management/");
+      //   })
 
-          `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/feature/${featureState.featureId}`
-
-        )
-
-        .then((response) => {
-
-          console.log("Delete successful");
-
-        })
-
-        .catch((error) => {
-
-          console.error("Error deleting:", error);
-
-        });
-
-      sessionStorage.clear();
-
-      navigate("/access-management/feature/");
-
-      window.location.reload();
-
+      //   .catch((error) => {
+      //     console.error("Error deleting:", error);
+      //   });
     }
-
   };
 
   return (
@@ -73,7 +54,7 @@ const FeatureHead = ({
                   </button>
                   <button
                     onClick={handleFeatureDelete}
-                    className="hover:tw-underline"
+                    className="tw-w-[150px] tw-h-[38px] tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
                   >
                     Delete
                   </button>
@@ -111,8 +92,8 @@ const FeatureHead = ({
             <div className="tw-flex tw-basis-1/2 tw-justify-end tw-items-center">
               <button onClick={handleSaveChanges}>Save Changes</button>
               <button
-                className="tw-w-[150px] tw-h-[38px] tw-font-bold tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
-                onClick={() => setIsEditable(false)}
+                className="tw-w-[150px] tw-h-[38px] tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
+                onClick={handleCancel}
               >
                 Cancel
               </button>
