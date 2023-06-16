@@ -13,7 +13,7 @@ export default function SubFeatureContent({
         <div>
           {item?.roles?.length > 0 &&
             item?.roles?.map((role) => (
-              <Pills key={role.roleId} label={role.roleName} />
+              <Pills key={role.roleId} label={role.roleName} type="roles" />
             ))}
         </div>
       </div>
@@ -25,7 +25,12 @@ export default function SubFeatureContent({
           <div className="">
             {item?.subFeatures?.length > 0 &&
               item?.subFeatures?.map((sf) => (
-                <Pills key={sf.featureId} label={sf.featureName} />
+                <Pills
+                  key={sf.featureId}
+                  pillId={sf.featureId}
+                  label={sf.featureName}
+                  type="feature"
+                />
               ))}
           </div>
         </div>

@@ -1,4 +1,3 @@
-import React from "react";
 import { FeatureHeadProps } from "./Interface";
 
 const PrimaryFeaturesHeader = ({

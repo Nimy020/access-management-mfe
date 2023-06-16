@@ -1,30 +1,36 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import search from "../assets/Union.svg";
 import leftArrow from "../assets/leftArrow.svg";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import customStyles from "./SearchDropDown/customStyles";
+import { pageHeader } from "./Interface";
 
-const PageHeader = (): JSX.Element => {
+const PageHeader = ({
+  seachItem,
+  label,
+  searchId,
+  searchBy,
+}: pageHeader): JSX.Element => {
   const id = "1234";
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);
   const [options, setOptions] = useState([]);
   const inputRef = useRef(null);
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
   const handleSearchTermChange = async (val) => {
     setIsActive(true);
     const searchTerm = val.value;
     try {
-      // const response = await axios.get(
-      //   `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service//v1/acl/all/features/${searchTerm}`
-      // );
-      // const responseData = response.data;
-      // if (responseData === "") {
-      //   setOptions([]);
-      // } else {
-      //   setOptions(responseData);
-      // }
+      const response = await axios.get(
+        `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}${seachItem}${searchTerm}`
+      );
+      const responseData = response.data;
+      if (responseData === "") {
+        setOptions([]);
+      } else {
+        setOptions(responseData);
+      }
     } catch (error) {
       // console.error("Error:", error);
     }
@@ -43,11 +49,12 @@ const PageHeader = (): JSX.Element => {
       window.removeEventListener("click", handleClickOutside);
     };
   }, []);
-  const handleClick = (option) => {
-    setIsActive(false);
-    navigate(`/access-management/feature/${option.featureId}`);
-  };
 
+  const handleClick = (optionId) => {
+    setIsActive(false);
+    sessionStorage.removeItem("breadcrumb");
+    navigate(`/access-management/${searchBy}/${optionId}`);
+  };
   const breadcrumbArr = JSON.parse(sessionStorage.getItem("breadcrumb"));
   const breadcrumb = breadcrumbArr?.length && breadcrumbArr.pop();
   const params = useParams();
@@ -100,7 +107,7 @@ const PageHeader = (): JSX.Element => {
         </div>
         <div className="tw-flex tw-basis-1/2 tw-justify-end">
           <div className="tw-flex tw-flex-col tw-h-fit">
-            <div className="tw-mr-2.5 tw-rounded-full tw-border-2 tw-border-gray tw-bg-white tw-flex tw-items-center tw-justify-start tw-w-[250px] tw-h-[44px] tw-flex">
+            <div className="tw-mr-2.5 tw-rounded-full tw-border-2 tw-border-gray tw-bg-white tw-flex tw-items-center tw-justify-start tw-w-[250px] tw-h-[44px]">
               <img className="tw-pl-3 tw-pr-2" src={search} alt="" />
               <input
                 className="tw-border-0 focus:tw-outline-none tw-bg-transparent"
@@ -114,31 +121,33 @@ const PageHeader = (): JSX.Element => {
             <div className="dropdown">
               {isActive && options?.length > 0 && (
                 <ul
-                  className=" tw-cursor-pointer tw-h-[300px] tw-border tw-bg-white tw-border-gray tw-rounded-4 tw-overflow-y-auto tw-z-10 tw-relative tw-w-[250px]  tw-py-2"
+                  className=" tw-cursor-pointer tw-max-h-[300px] tw-h-auto tw-border tw-bg-white tw-border-gray tw-rounded-4 tw-overflow-y-auto tw-z-10 tw-relative tw-w-[250px]  tw-py-2"
                   data-testid="list-options"
                 >
                   {options?.length > 0 &&
-                    options.map((option, index) => (
-                      <li
-                        key={index}
-                        value={option}
-                        className={customStyles.dropdown.optionsList}
-                        onClick={() => {
-                          handleClick(option);
-                        }}
-                      >
-                        {option.featureName}
-                      </li>
-                    ))}
+                    options.map((option, index) => {
+                      let itemName, itemId;
+                      if (option.hasOwnProperty(label)) {
+                        itemName = option[label];
+                        itemId = option[searchId];
+                      }
+                      return (
+                        <li
+                          key={index}
+                          value={option}
+                          className={customStyles.dropdown.optionsList}
+                          onClick={() => {
+                            handleClick(itemId);
+                          }}
+                        >
+                          {itemName}
+                        </li>
+                      );
+                    })}
                 </ul>
               )}
             </div>
           </div>
-          {/* <div>
-            <button className="tw-bg-black tw-rounded-full tw-h-[44px] tw-w-[130px] tw-text-white">
-              Search
-            </button>
-          </div> */}
         </div>
       </div>
     </div>

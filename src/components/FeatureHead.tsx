@@ -3,7 +3,6 @@ import { FeatureHeadProps } from "./Interface";
 import axios from "axios";
 
 const FeatureHead = ({
-  setModalState,
   featureState,
   setIsEditable,
   isEditable,
@@ -11,22 +10,21 @@ const FeatureHead = ({
   handleSaveChanges,
   handleCancel,
 }: FeatureHeadProps): JSX.Element => {
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
   const navigate = useNavigate();
   const handleFeatureDelete = () => {
     if (confirm("Are you sure you want to delete this feature?")) {
-      // axios
-
-      //   .delete(
-      //     `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/feature/${featureState.featureId}`
-      //   )
-
-      //   .then((response) => {
+      axios
+        .delete(
+          `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}feature/${featureState.featureId}`
+        )
+        .then((response) => {
           navigate("/access-management/");
-      //   })
+        })
 
-      //   .catch((error) => {
-      //     console.error("Error deleting:", error);
-      //   });
+        .catch((error) => {
+          console.error("Error deleting:", error);
+        });
     }
   };
 

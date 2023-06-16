@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { useEffect, useRef } from "react";
 import closeIcon from "../assets/close.svg";
 import { ModalProps } from "./Interface";

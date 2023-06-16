@@ -18,6 +18,7 @@ export interface PillsProps {
   onChange?: any;
   isEditable?: any;
   pillId?: string;
+  type?: string;
 }
 export interface CreateNewFeatureProps {
   setModalState?: any;
@@ -43,4 +44,10 @@ export type LocationState = {
   name: string;
   id?: string;
   type?: string;
+};
+export type pageHeader = {
+  seachItem?: string;
+  label?: string;
+  searchId?: any;
+  searchBy?: string;
 };

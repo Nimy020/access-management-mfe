@@ -12,7 +12,6 @@ import Pills from "../components/Pills";
 import { LocationState } from "../components/Interface";
 import SearchDropDown from "../components/SearchDropDown/SearchDropDown";
 
-// const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
 export default function FeatureDetail() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [featureState, setFeatureState] = useState({
@@ -38,6 +37,7 @@ export default function FeatureDetail() {
     roles: [],
   });
 
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
   const state: LocationState = {
     type: "feature",
     name: featureState?.featureName,
@@ -58,20 +58,17 @@ export default function FeatureDetail() {
       roleIds: featureState?.roles.map(({ roleId }) => roleId),
       featureId: params?.id,
     };
-    console.log("Updated data", updatedData, featureForm);
-
-    // axios
-    //   .put(
-    //     `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/feature/${updatedData.featureId}`,
-    //     updatedData
-    //   )
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     navigate(0);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
+    axios
+      .put(
+        `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}feature/${updatedData.featureId}`,
+        updatedData
+      )
+      .then((response) => {
+        navigate(0);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const handleRoleChange = (id, value) => {
@@ -116,34 +113,30 @@ export default function FeatureDetail() {
     setFeatureState(initialFeatureState);
   };
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await axios.get(
-  //         `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/features/${params.id}`
-  //       );
-  //       setInitialFeatureState(response.data);
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
-  //   fetchData();
-  // }, [params]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}features/${params.id}`
+        );
+        setInitialFeatureState(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchData();
+  }, [params]);
 
   const handleRoleDropDownChange = async (inputValue) => {
     try {
-      console.log(inputValue);
       if (inputValue?.name) {
-        // const response = await axios.get(
-        //   CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
-        // );
-        // console.log("handleFeatureDropDownChange", response.data);
-        // let filteredData = [];
-        // if (response?.data) {
-        //   console.log("filteredData", response?.data);
-        //   return response?.data;
-        // }
+        const response = await axios.get(
+          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
+        );
+        let filteredData = [];
+        if (response?.data) {
+          return response?.data;
+        }
       } else {
         return null;
       }
@@ -155,18 +148,16 @@ export default function FeatureDetail() {
 
   const handleFeatureDropDownChange = async (inputValue) => {
     try {
-      console.log(inputValue);
       if (inputValue?.name) {
-        // const response = await axios.get(
-        //   CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
-        //     "/all/features/" +
-        //     inputValue.name
-        // );
-        // console.log("handleFeatureDropDownChange", response.data);
-        // let filteredData = [];
-        // if (response?.data) {
-        //   return response?.data;
-        // }
+        const response = await axios.get(
+          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
+            "/all/features/" +
+            inputValue.name
+        );
+        let filteredData = [];
+        if (response?.data) {
+          return response?.data;
+        }
       } else {
         return null;
       }
@@ -176,12 +167,12 @@ export default function FeatureDetail() {
     return null;
   };
 
-  useEffect(() => {
-    if (params?.id) {
-      const data = primaryFeatures.find((f) => f.featureId === params.id);
-      setInitialFeatureState(data);
-    }
-  }, [params]);
+  // useEffect(() => {
+  //   if (params?.id) {
+  //     const data = primaryFeatures.find((f) => f.featureId === params.id);
+  //     setInitialFeatureState(data);
+  //   }
+  // }, [params]);
 
   useEffect(() => {
     setFeatureForm({
@@ -190,10 +181,20 @@ export default function FeatureDetail() {
     });
     setFeatureState(initialFeatureState);
   }, [initialFeatureState]);
-
+  const handleBreadcrumb = (id) => {
+    let breadcrumb = JSON.parse(sessionStorage.getItem("breadcrumb")) || [];
+    breadcrumb.push(state);
+    sessionStorage.setItem("breadcrumb", JSON.stringify(breadcrumb));
+    navigate(`/access-management/feature/${id}`);
+  };
   return (
     <>
-      <PageHeader />
+      <PageHeader
+        seachItem={"all/features/"}
+        label={"featureName"}
+        searchId={"featureId"}
+        searchBy={"feature"}
+      />
       <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-mb-28">
         <FeatureHead
           featureState={featureState}
@@ -238,7 +239,7 @@ export default function FeatureDetail() {
               />
             ))}
         </div>
-        <div className="tw-flex tw-justify-between tw-items-baseline tw-mt-16 tw-pb-4 tw-border-b-2">
+        <div className="tw-flex tw-justify-between tw-items-baseline tw-mt-16  tw-mb-3 tw-pb-4 tw-border-b-2">
           <h3 className="tw-text-lg tw-font-bold ">Sub Features</h3>
           {!isEditable && (
             <button
@@ -249,7 +250,6 @@ export default function FeatureDetail() {
             </button>
           )}
         </div>
-
         {isEditable && (
           <div className="tw-mt-6 tw-w-1/3 tw-mb-4">
             <SearchDropDown
@@ -286,14 +286,7 @@ export default function FeatureDetail() {
               key={item.featureId}
               isEditable={isEditable}
               handleLink={() => {
-                let breadcrumb =
-                  JSON.parse(sessionStorage.getItem("breadcrumb")) || [];
-                breadcrumb.push(state);
-                sessionStorage.setItem(
-                  "breadcrumb",
-                  JSON.stringify(breadcrumb)
-                );
-                navigate(`/access-management/feature/${item.featureId}`);
+                handleBreadcrumb(item.featureId);
               }}
               handleDelete={() => handleSubfeatureChange(item.featureId, "")}
             >

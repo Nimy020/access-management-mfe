@@ -1,36 +1,12 @@
 import { useRef, useState } from "react";
-import { TextBox, Dropdown, Button } from "@sephora-csc/csc-component-library";
+import { TextBox, Button } from "@sephora-csc/csc-component-library";
 import { CreateNewFeatureProps } from "./Interface";
-import SearchDropDown  from "./SearchDropDown/SearchDropDown";
+import SearchDropDown from "./SearchDropDown/SearchDropDown";
 import axios from "axios";
 import Pills from "./Pills";
 import { useNavigate } from "react-router-dom";
 
-// const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
-//   // {
-//   //   roleId: "1",
-//   //   roleName: "csc_agent_tier1",
-//   // },
-//   // {
-//   //   roleId: "2",
-//   //   roleName: "csc_agent_tier2",
-//   // },
-//   // {
-//   //   roleId: "3",
-//   //   roleName: "csc_agent_tier3",
-//   // },
-// ];
-
-// const subFeatures = [
-//   // {
-//   //   featureId: null,
-//   //   featureName: "Order_personal_fields_name",
-//   // },
-//   // {
-//   //   featureId: null,
-//   //   featureName: "Order_personal_fields_email",
-//   // },
-// ];
+const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
 
 const CreateNewFeature = ({
   setModalState,
@@ -51,92 +27,83 @@ const CreateNewFeature = ({
 
   const handleModalSubmit = () => {
     let formData;
-    console.log('submit Modalform', modalForm);
-    const roleIds = modalForm?.roles?.map(role => {
-        return role.roleId;
+    const roleIds = modalForm?.roles?.map((role) => {
+      return role.roleId;
     });
 
-    const subFeaturesIds = modalForm?.subFeatures?.map(feature => {
+    const subFeaturesIds = modalForm?.subFeatures?.map((feature) => {
       return feature.featureId;
-  });
-    const parentFeatureId = featureId?featureId:"";
+    });
+    const parentFeatureId = featureId ? featureId : "";
     const newFeatureData = {
       parentFeatureId: featureId,
       featureName: modalForm.featureName,
       featureDescription: modalForm.featureDescription,
       roleIds: roleIds,
-      subFeatures: subFeaturesIds
-    }
+      subFeatures: subFeaturesIds,
+    };
 
-   const api_headers_Data = {
-    "Content-Type": "application/json",
-   };
+    const api_headers_Data = {
+      "Content-Type": "application/json",
+    };
 
+    const postAsyncData = async () => {
+      try {
+        const response = await axios.post(
+          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature",
+          newFeatureData,
+          { headers: api_headers_Data }
+        );
+        setModalState({ isOpen: false, action: "" });
+        navigate(0);
+      } catch (error) {
+        console.error("Error during POST request:", error);
+      }
+    };
 
-    // const postAsyncData = async () => {
-    //   try {
-    //     const response = await axios.post(CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature", newFeatureData, {headers:  api_headers_Data });
-    //     console.log('POST request successful:', response.data);
-    //     setModalState({ isOpen: false, action: "" });
-    //     navigate(0);
-    //   } catch (error) {
-    //     console.error('Error during POST request:', error);
-    //   }
-    // };
-
-    // postAsyncData();
-    
-    
+    postAsyncData();
   };
 
   const handleFormChange = (fieldName, fieldValue) => {
     let updatedForm = fieldValue;
-    if(Array.isArray(modalForm[fieldName])) {
+    if (Array.isArray(modalForm[fieldName])) {
       updatedForm = modalForm[fieldName];
-      updatedForm?.push(fieldValue)
-    } 
-    
-    console.log('modalForm on change', modalForm);
-    setModalForm({ ...modalForm, [fieldName]:  updatedForm});
-    console.log('modalForm  on change', modalForm);
+      updatedForm?.push(fieldValue);
+    }
+    setModalForm({ ...modalForm, [fieldName]: updatedForm });
   };
 
   const handleSelectedRoleDelete = (selectedRoleID) => {
-    console.log('deleting selected Role', selectedRoleID);
-      if (selectedRoleID) {
-        const updatedRoles = modalForm?.roles?.filter((value) => value.roleId !== selectedRoleID);  
-        setModalForm({ ...modalForm, roles:  updatedRoles});
-      }
-  }
+    if (selectedRoleID) {
+      const updatedRoles = modalForm?.roles?.filter(
+        (value) => value.roleId !== selectedRoleID
+      );
+      setModalForm({ ...modalForm, roles: updatedRoles });
+    }
+  };
 
   const handleSelectedFeatureDelete = (selectedFeatureId) => {
-    console.log('deleting selected feature', selectedFeatureId);
-      if (selectedFeatureId) {
-        const updatedFeatures = modalForm?.subFeatures?.filter((value) => value.featureId !== selectedFeatureId);  
-        setModalForm({ ...modalForm, subFeatures:  updatedFeatures});
-      }
-  }
+    if (selectedFeatureId) {
+      const updatedFeatures = modalForm?.subFeatures?.filter(
+        (value) => value.featureId !== selectedFeatureId
+      );
+      setModalForm({ ...modalForm, subFeatures: updatedFeatures });
+    }
+  };
 
   const handleRoleDropDownChange = async (inputValue) => {
     try {
-      console.log(inputValue);
       if (inputValue?.name) {
-        // const response = await axios.get(
-        //   CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
-        // );
-        // console.log('handleFeatureDropDownChange', response.data);
-        // let filteredData = [];
-        // if (response?.data) {
-          
-        //   console.log('filteredData', response?.data);
-        //   return response?.data;
-        // }
-
-        
+        const response = await axios.get(
+          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
+        );
+        let filteredData = [];
+        if (response?.data) {
+          return response?.data;
+        }
       } else {
         return null;
       }
-      
     } catch (error) {
       console.error(error);
     }
@@ -145,22 +112,19 @@ const CreateNewFeature = ({
 
   const handleFeatureDropDownChange = async (inputValue) => {
     try {
-      console.log(inputValue);
       if (inputValue?.name) {
-        // const response = await axios.get(
-        //   CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/features/" + inputValue.name
-        // );
-        // console.log('handleFeatureDropDownChange', response.data);
-        // let filteredData = [];
-        // if (response?.data) {
-          
-        //   return response?.data;
-        // }
-        
+        const response = await axios.get(
+          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
+            "/all/features/" +
+            inputValue.name
+        );
+        let filteredData = [];
+        if (response?.data) {
+          return response?.data;
+        }
       } else {
         return null;
       }
-      
     } catch (error) {
       console.error(error);
     }
@@ -169,10 +133,6 @@ const CreateNewFeature = ({
 
   return (
     <>
-      <div className=" tw-mt-5 tw-text-center tw-text-[#676567] tw-opacity-100">
-        Sed eu semper ligula. Proin dapibus nunc quis ligula ullamcorper
-        venenatis. Nulla mollis sagittis
-      </div>
       <div className="tw-mt-5">
         <TextBox
           label="Feature Name"
@@ -180,14 +140,13 @@ const CreateNewFeature = ({
         />
       </div>
       <div className="tw-mt-3 tw-relative">
-        <input
-          type={"text"}
+        <textarea
           onChange={(e) =>
             handleFormChange("featureDescription", e.target.value)
           }
-          className="tw-rounded-md tw-border tw-border-gray focus:tw-border-black tw-h-[120px] tw-w-[380px] tw-opacity-100"
+          className="tw-peer tw-h-[120px] tw-pt-5 tw-flex tw-flex-wrap tw-pb-1.5 tw-px-3 tw-border tw-outline-none tw-rounded-4 tw-text-sm tw-text-black  tw-w-full tw-bg-white tw-border-gray focus:tw-border-black tw-"
         />
-        <span className="tw-absolute tw-text-[#676567] tw-left-3.5 tw-top-3.5 tw-pointer-events-none tw-transition tw-ease-in tw-delay-200 tw-text-xs peer-placeholder-shown:tw-top-3.5 peer-placeholder-shown:tw-text-sm peer-focus:tw-pointer-events-none peer-focus:tw-top-1 peer-focus:tw-transition peer-focus:tw-ease-in peer-focus:tw-delay-200 peer-focus:tw-text-xs">
+        <span className="tw-absolute tw-left-3.5 tw-top-2  tw-pointer-events-none tw-transition tw-ease-in tw-delay-200 tw-text-xs peer-placeholder-shown:tw-top-3.5 peer-placeholder-shown:tw-text-sm peer-focus:tw-pointer-events-none peer-focus:tw-top-1 peer-focus:tw-transition peer-focus:tw-ease-in peer-focus:tw-delay-200 peer-focus:tw-text-xs">
           {"Feature Description"}
         </span>
       </div>
@@ -206,22 +165,24 @@ const CreateNewFeature = ({
           code={"roleId"}
           selectArrow={"greyArrow"}
           onChange={handleRoleDropDownChange}
-          defaultValue={""}    
-
+          defaultValue={""}
         />
       </div>
 
       <div className="tw-mt-2.5">
-          <div className="">
-            {console.log('modalForm1234:',modalForm )}
-            {modalForm?.roles?.length > 0 &&
-              modalForm?.roles?.map((sf) => (
-                <Pills key={sf.roleId} label={sf.roleName}  isEditable= {true}
-                handleDelete =  {handleSelectedRoleDelete} pillId ={sf.roleId}/>
-              ))}
-          </div>
+        <div className="">
+          {modalForm?.roles?.length > 0 &&
+            modalForm?.roles?.map((sf) => (
+              <Pills
+                key={sf.roleId}
+                label={sf.roleName}
+                isEditable={true}
+                handleDelete={handleSelectedRoleDelete}
+                pillId={sf.roleId}
+              />
+            ))}
         </div>
-
+      </div>
 
       <div className="tw-mt-4 tw-font-bold">{"Subfeatures"}</div>
       <div className="tw-mt-2.5">
@@ -232,7 +193,7 @@ const CreateNewFeature = ({
           type="select"
           options={subFeatures}
           setSelectedOption={(value) => handleFormChange("subFeatures", value)}
-          defaultValue={""}          
+          defaultValue={""}
           dropDownRef={subFeatureRef}
           disabledSelect={true}
           name={"featureName"}
@@ -243,14 +204,19 @@ const CreateNewFeature = ({
       </div>
 
       <div className="tw-mt-2.5">
-          <div className="">
-            {console.log('modalForm1234:',modalForm )}
-            {modalForm?.subFeatures?.length > 0 &&
-              modalForm?.subFeatures?.map((sf) => (
-                <Pills key={sf.featureId} label={sf.featureName} isEditable={true}  handleDelete =  {handleSelectedFeatureDelete} pillId={sf.featureId}/>
-              ))}
-          </div>
+        <div className="">
+          {modalForm?.subFeatures?.length > 0 &&
+            modalForm?.subFeatures?.map((sf) => (
+              <Pills
+                key={sf.featureId}
+                label={sf.featureName}
+                isEditable={true}
+                handleDelete={handleSelectedFeatureDelete}
+                pillId={sf.featureId}
+              />
+            ))}
         </div>
+      </div>
 
       <div className="tw-mt-[30px]  tw-text-center">
         <Button

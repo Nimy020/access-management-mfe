@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import deleteIcon from "../assets/delete.svg";
 import { AccordianProps } from "./Interface";
 import editIcon from "../assets/view-edit.svg";
 const Accordion = ({

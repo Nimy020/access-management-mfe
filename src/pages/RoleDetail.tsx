@@ -19,22 +19,24 @@ export default function RoleDetail() {
     featureName: null,
   });
 
-
-
-  const state: LocationState = { name: featureState?.featureName };
+  const state: LocationState = {
+    type: "roles",
+    name: featureState?.featureName,
+    id: featureState?.featureId,
+  };
 
   const navigate = useNavigate();
 
   const params = useParams();
 
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
   useEffect(() => {
     async function fetchData() {
       try {
-        // const response = await axios.get(
-        //   `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/features/${params.id}`
-        // );
-        // setFeatureState(response.data);
-        // console.log(response.data);
+        const response = await axios.get(
+          `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}all/roles`
+        );
+        setFeatureState(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -44,7 +46,12 @@ export default function RoleDetail() {
 
   return (
     <>
-      <PageHeader />
+      <PageHeader
+        seachItem={"all/roles/"}
+        label={"roleName"}
+        searchId={"roleId"}
+        searchBy={"roles"}
+      />
       <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <FeatureHead
           setModalState={setModalState}

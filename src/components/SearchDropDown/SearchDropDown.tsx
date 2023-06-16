@@ -1,5 +1,4 @@
-/* eslint-disable no-nested-ternary */
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { SearchDropDownProps } from "./Interface";
 import customStyles from "./customStyles";
 import tickMark from "./tickMark.svg";
@@ -41,7 +40,7 @@ const SearchDropDown = (props: SearchDropDownProps) => {
   }, [ref]);
 
   const debouncedChangeHandler = debounce((value) => {
-    handleDropDownChange(searchValue);
+    handleDropDownChange(value);
   }, 300); // Set the desired debounce delay (e.g., 300 milliseconds)
 
   const handleChange = (event) => {
@@ -49,11 +48,6 @@ const SearchDropDown = (props: SearchDropDownProps) => {
     setSearchValue(value);
     debouncedChangeHandler(value);
   };
-
-  // useEffect(() => {
-
-  //   handleDropDownChange(searchValue);
-  // }, [searchValue]);
 
   const handleDropDownChange = async (inputValue) => {
     const filterdOptions = await props.onChange({ code: "", name: inputValue });
@@ -123,12 +117,12 @@ const SearchDropDown = (props: SearchDropDownProps) => {
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
-            <img src={downArrow} alt="downArrow" />
-          ) : (
             <img
               src={images[props?.selectArrow]?.src || images.greyArrow.src}
               alt={props.selectArrow}
             ></img>
+          ) : (
+            <img src={downArrow} alt="downArrow" />
           )}
         </div>
       )}
@@ -154,13 +148,13 @@ const SearchDropDown = (props: SearchDropDownProps) => {
               </div>
               {tick === option[props.name] && props.defaultValue !== "" && (
                 <div>
-                  {/* <img
+                  <img
                     className=""
                     src={tickMark}
                     alt={"tick"}
                     role="presentation"
                     data-testid={"tick"}
-                  /> */}
+                  />
                 </div>
               )}
             </li>
