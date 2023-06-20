@@ -45,6 +45,10 @@ export type LocationState = {
   id?: string;
   type?: string;
 };
+export interface RoleProps {
+  setModalState?: any;
+  initialValues?: any;
+}
 export type pageHeader = {
   seachItem?: string;
   label?: string;

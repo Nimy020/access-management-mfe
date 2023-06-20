@@ -2,13 +2,16 @@ import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
-// import primaryFeatures from "../demo.json";
+import primaryFeatures from "../demo.json";
 import axios from "axios";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
 import { LocationState } from "../components/Interface";
 import { useNavigate } from "react-router-dom";
+import RolesListing from './RolesListing';
+
+
 
 export default function AccessManagement() {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
@@ -21,20 +24,20 @@ export default function AccessManagement() {
   const [isEditable, setIsEditable] = useState(false);
   const [featureForm, setFeatureForm] = useState({});
 
-  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+  // const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
 
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
 
-  // useEffect(() => {
-  //   setFeatureState({
-  //     featureId: "",
-  //     featureName: "Primary Features",
-  //     featureDescription: "Listed below primary features of CSC",
-  //     subFeatures: primaryFeatures,
-  //   });
-  // }, []);
+  useEffect(() => {
+    setFeatureState({
+      featureId: "",
+      featureName: "Primary Features",
+      featureDescription: "Listed below primary features of CSC",
+      subFeatures: primaryFeatures,
+    });
+  }, []);
   const state: LocationState = {
     type: "feature",
     name: featureState?.featureName,
@@ -43,41 +46,44 @@ export default function AccessManagement() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/primaryfeatures"
-        );
-        setFeatureState({
-          featureId: "",
-          featureName: "Primary Features",
-          featureDescription:
-            "Listed below are primary feature of the cec platform admin management",
-          subFeatures: response.data,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const response = await axios.get(
+  //         CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/primaryfeatures"
+  //       );
+  //       setFeatureState({
+  //         featureId: "",
+  //         featureName: "Primary Features",
+  //         featureDescription:
+  //           "Listed below are primary feature of the cec platform admin management",
+  //         subFeatures: response.data,
+  //       });
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  //   fetchData();
+  // }, []);
 
-  const handleBreadcrumb = (id) => {
+  const handleBreadcrumb = (id,type) => {
     let breadcrumb = JSON.parse(sessionStorage.getItem("breadcrumb")) || [];
     breadcrumb.push(state);
     sessionStorage.setItem("breadcrumb", JSON.stringify(breadcrumb));
-    navigate(`/access-management/feature/${id}`);
+    navigate(`/access-management/${type}/${id}`);
   };
 
   return (
     <>
-      <PageHeader
+         <PageHeader
         seachItem={"all/features/"}
         label={"featureName"}
         searchId={"featureId"}
         searchBy={"feature"}
       />
+      <RolesListing header={false}  />
+  
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative tw-mb-28">
         <FeatureHead
           setModalState={setModalState}
@@ -106,7 +112,7 @@ export default function AccessManagement() {
               subTitle={item.featureDescription}
               key={item.featureId}
               handleLink={() => {
-                handleBreadcrumb(item.featureId);
+                handleBreadcrumb(item.featureId,"feature");
               }}
             >
               <SubFeatureContent

@@ -47,6 +47,40 @@ export default function FeatureDetail() {
   const navigate = useNavigate();
   const params = useParams();
 
+  // const handleRoleSearch = async (val) => {
+  //   const searchTerm = val.value;
+  //   try {
+  //     const response = await axios.get(
+  //       `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/roles/${searchTerm}`
+  //     );
+  //     const data = response.data;
+  //     if (data === "") {
+  //       setRoleOptions([]);
+  //     } else {
+  //       setRoleOptions(data);
+  //     }
+  //   } catch (error) {
+  //     // console.error("Error:", error);
+  //   }
+  // };
+
+  // const handleFeatureSearch = async (val) => {
+  //   const searchTerm = val.value;
+  //   try {
+  //     const response = await axios.get(
+  //       `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/features/${searchTerm}`
+  //     );
+  //     const data = response.data;
+  //     if (data === "") {
+  //       setFeatureOptions([]);
+  //     } else {
+  //       setFeatureOptions(data);
+  //     }
+  //   } catch (error) {
+  //     // console.error("Error:", error);
+  //   }
+  // };
+
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
@@ -58,12 +92,15 @@ export default function FeatureDetail() {
       roleIds: featureState?.roles.map(({ roleId }) => roleId),
       featureId: params?.id,
     };
+    console.log("Updated data", updatedData, featureForm);
+
     axios
       .put(
         `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}feature/${updatedData.featureId}`,
         updatedData
       )
       .then((response) => {
+        console.log(response.data);
         navigate(0);
       })
       .catch((error) => {
@@ -120,6 +157,7 @@ export default function FeatureDetail() {
           `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}features/${params.id}`
         );
         setInitialFeatureState(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -129,12 +167,15 @@ export default function FeatureDetail() {
 
   const handleRoleDropDownChange = async (inputValue) => {
     try {
+      console.log(inputValue);
       if (inputValue?.name) {
         const response = await axios.get(
           CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
         );
+        console.log("handleFeatureDropDownChange", response.data);
         let filteredData = [];
         if (response?.data) {
+          console.log("filteredData", response?.data);
           return response?.data;
         }
       } else {
@@ -148,14 +189,23 @@ export default function FeatureDetail() {
 
   const handleFeatureDropDownChange = async (inputValue) => {
     try {
+      console.log(inputValue);
       if (inputValue?.name) {
         const response = await axios.get(
           CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
             "/all/features/" +
             inputValue.name
         );
+        console.log("handleFeatureDropDownChange", response.data);
         let filteredData = [];
         if (response?.data) {
+          //  const filteredData =  response?.data?.map( item => {
+          //     console.log('item', item);
+          //     const newItem = {id: item.featureId, name: item.featureName};
+          //     console.log('newItem', newItem);
+          //     return newItem;
+          //   });
+          console.log("filteredData", response?.data);
           return response?.data;
         }
       } else {
@@ -236,6 +286,8 @@ export default function FeatureDetail() {
                 key={item.roleId}
                 isEditable={isEditable}
                 handleDelete={() => handleRoleChange(item.roleId, "")}
+                type={"role"}
+                pillId={item.roleId}
               />
             ))}
         </div>

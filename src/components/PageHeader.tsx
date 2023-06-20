@@ -17,23 +17,23 @@ const PageHeader = ({
   const [isActive, setIsActive] = useState(false);
   const [options, setOptions] = useState([]);
   const inputRef = useRef(null);
-  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+  // const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
   const handleSearchTermChange = async (val) => {
     setIsActive(true);
     const searchTerm = val.value;
-    try {
-      const response = await axios.get(
-        `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}${seachItem}${searchTerm}`
-      );
-      const responseData = response.data;
-      if (responseData === "") {
-        setOptions([]);
-      } else {
-        setOptions(responseData);
-      }
-    } catch (error) {
-      // console.error("Error:", error);
-    }
+    // try {
+    //   const response = await axios.get(
+    //     `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}${seachItem}${searchTerm}`
+    //   );
+    //   const responseData = response.data;
+    //   if (responseData === "") {
+    //     setOptions([]);
+    //   } else {
+    //     setOptions(responseData);
+    //   }
+    // } catch (error) {
+    //   // console.error("Error:", error);
+    // }
   };
   useEffect(() => {
     const handleClickOutside = (event) => {

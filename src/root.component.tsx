@@ -1,24 +1,16 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import AccessManagement from "./pages/AccessManagement";
-import "./index.css";
-import FeatureDetail from "./pages/FeatureDetail";
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+
+import './index.css';
+import routes from './routes';
 
 export default function Root(props) {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="*"
-          element={<Navigate to="/access-management/" />}
-        />
-        <Route
-          path={"/access-management/"}
-          element={<AccessManagement />}
-        />
-        <Route
-          path={"/access-management/feature/:id"}
-          element={<FeatureDetail />}
-        />
+        <Route path='*' element={<Navigate to='/access-management/' />} />
+        {routes.map((route, id) => {
+          return <Route key={id} path={route.path} element={route.element} />;
+        })}
       </Routes>
     </BrowserRouter>
   );

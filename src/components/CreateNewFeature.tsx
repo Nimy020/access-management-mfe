@@ -6,7 +6,7 @@ import axios from "axios";
 import Pills from "./Pills";
 import { useNavigate } from "react-router-dom";
 
-const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+// const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
 
 const CreateNewFeature = ({
   setModalState,
@@ -26,42 +26,42 @@ const CreateNewFeature = ({
   const subFeatureRef = useRef(null);
 
   const handleModalSubmit = () => {
-    let formData;
-    const roleIds = modalForm?.roles?.map((role) => {
-      return role.roleId;
-    });
+    // let formData;
+    // const roleIds = modalForm?.roles?.map((role) => {
+    //   return role.roleId;
+    // });
 
-    const subFeaturesIds = modalForm?.subFeatures?.map((feature) => {
-      return feature.featureId;
-    });
-    const parentFeatureId = featureId ? featureId : "";
-    const newFeatureData = {
-      parentFeatureId: featureId,
-      featureName: modalForm.featureName,
-      featureDescription: modalForm.featureDescription,
-      roleIds: roleIds,
-      subFeatures: subFeaturesIds,
-    };
+    // const subFeaturesIds = modalForm?.subFeatures?.map((feature) => {
+    //   return feature.featureId;
+    // });
+    // const parentFeatureId = featureId ? featureId : "";
+    // const newFeatureData = {
+    //   parentFeatureId: featureId,
+    //   featureName: modalForm.featureName,
+    //   featureDescription: modalForm.featureDescription,
+    //   roleIds: roleIds,
+    //   subFeatures: subFeaturesIds,
+    // };
 
-    const api_headers_Data = {
-      "Content-Type": "application/json",
-    };
+    // const api_headers_Data = {
+    //   "Content-Type": "application/json",
+    // };
 
-    const postAsyncData = async () => {
-      try {
-        const response = await axios.post(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature",
-          newFeatureData,
-          { headers: api_headers_Data }
-        );
-        setModalState({ isOpen: false, action: "" });
-        navigate(0);
-      } catch (error) {
-        console.error("Error during POST request:", error);
-      }
-    };
+    // const postAsyncData = async () => {
+    //   try {
+    //     const response = await axios.post(
+    //       CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature",
+    //       newFeatureData,
+    //       { headers: api_headers_Data }
+    //     );
+    //     setModalState({ isOpen: false, action: "" });
+    //     navigate(0);
+    //   } catch (error) {
+    //     console.error("Error during POST request:", error);
+    //   }
+    // };
 
-    postAsyncData();
+    // postAsyncData();
   };
 
   const handleFormChange = (fieldName, fieldValue) => {
@@ -92,42 +92,42 @@ const CreateNewFeature = ({
   };
 
   const handleRoleDropDownChange = async (inputValue) => {
-    try {
-      if (inputValue?.name) {
-        const response = await axios.get(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
-        );
-        let filteredData = [];
-        if (response?.data) {
-          return response?.data;
-        }
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    // try {
+    //   if (inputValue?.name) {
+    //     const response = await axios.get(
+    //       CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
+    //     );
+    //     let filteredData = [];
+    //     if (response?.data) {
+    //       return response?.data;
+    //     }
+    //   } else {
+    //     return null;
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    // }
     return null;
   };
 
   const handleFeatureDropDownChange = async (inputValue) => {
-    try {
-      if (inputValue?.name) {
-        const response = await axios.get(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
-            "/all/features/" +
-            inputValue.name
-        );
-        let filteredData = [];
-        if (response?.data) {
-          return response?.data;
-        }
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    // try {
+    //   if (inputValue?.name) {
+    //     const response = await axios.get(
+    //       CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
+    //         "/all/features/" +
+    //         inputValue.name
+    //     );
+    //     let filteredData = [];
+    //     if (response?.data) {
+    //       return response?.data;
+    //     }
+    //   } else {
+    //     return null;
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    // }
     return null;
   };
 
