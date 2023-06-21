@@ -18,7 +18,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   const [previousPageName, setPreviousPageName] = useState([]);
 
   useEffect(() => {
-    if (location.pathname !== "/access-management")
+    if (location.pathname !== "/csc-agent-platform/admin/access-management")
       setPreviousPageName(["Dashboard"]);
   }, []);
   

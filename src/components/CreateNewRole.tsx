@@ -1,22 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { TextBox, Button } from "@sephora-csc/csc-component-library";
 import { RoleProps } from "./Interface";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
+import { addRoleData, editRoleData } from "../utils/apiServices";
+import { ModalContext } from "../context/ModalProvider";
 
 const CreateNewRole = ({
-  setModalState,
   initialValues = null,
 }: RoleProps): React.JSX.Element => {
-  const navigate = useNavigate();
-
-  const [modalForm, setModalForm] = useState({
-    roleId: initialValues?.roleId || "",
-    roleName: initialValues?.roleName || "",
-    roleDescription: initialValues?.roleDescription || "",
-  });
-  const [error, setError] = useState("");
+  const { closeModal, modalForm, setModalForm, error, setError } =
+    useContext(ModalContext);
 
   const handleModalSubmit = async () => {
     setError("");
@@ -31,26 +23,15 @@ const CreateNewRole = ({
       roleDescription: modalForm.roleDescription,
     };
 
-    const api_headers_Data = {
-      "Content-Type": "application/json",
-    };
     const postAsyncData = async (roleId) => {
       try {
         if (initialValues?.roleId) {
-          await axios.put(
-            CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + `/role/${roleId}`,
-            newFeatureData,
-            { headers: api_headers_Data }
-          );
+          await editRoleData(roleId, newFeatureData);
         } else {
-          await axios.post(
-            CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/role",
-            newFeatureData,
-            { headers: api_headers_Data }
-          );
+          await addRoleData(newFeatureData);
         }
-        setModalState({ isOpen: false, action: "" });
-        navigate(0);
+        closeModal("addRole");
+        setModalForm({ refresh: true });
       } catch (error) {
         console.error("Error during POST request:", error);
       }

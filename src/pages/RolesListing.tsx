@@ -1,19 +1,17 @@
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
-import axios from "axios";
+import { getAllRoles, deleteRole } from "../utils/apiServices";
 import CreateNewRole from "../components/CreateNewRole";
 import { useNavigate } from "react-router-dom";
 import viewEditIcon from "../assets/view-edit.svg";
 import ListHead from "../components/ListHead";
 import { NavigationContext } from "../context/NavigationProvider";
+import { ModalContext } from "../context/ModalProvider";
 
 const fetchData = async () => {
   try {
-    const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
-    const response = await axios.get(
-      CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles"
-    );
+    const response = await getAllRoles();
     return response?.data;
   } catch (error) {
     console.error(error);
@@ -21,10 +19,7 @@ const fetchData = async () => {
 };
 const deleteData = async (roleId) => {
   try {
-    const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
-    await axios.delete(
-      CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + `/role/${roleId}`
-    );
+    await deleteRole(roleId);
     return true;
   } catch (error) {
     console.error(error);
@@ -32,25 +27,14 @@ const deleteData = async (roleId) => {
 };
 
 export default function RolesListing({ header = true }) {
-  const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [rolesState, setRolesState] = useState([]);
   const [roleUpdate, setRoleUpdate] = useState({ key: "", message: "" });
   const limitMax = 3;
   const navigate = useNavigate();
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
-
-  useEffect(() => {
-    const fetchDataCallback = async () => {
-      const result = await fetchData();
-      if (!header) {
-        setRolesState(result.slice(0, limitMax));
-      } else {
-        setRolesState(result);
-      }
-    };
-    fetchDataCallback().catch((err) => console.error(err));
-  }, [roleUpdate]);
+  const { modalState, openModal, closeModal, modalForm, setModalForm } =
+    useContext(ModalContext);
 
   const deleteRole = (roleId: any) => {
     const deleteDatacallback = async () => {
@@ -61,6 +45,22 @@ export default function RolesListing({ header = true }) {
     };
     deleteDatacallback().catch((err) => console.error(err));
   };
+
+  useEffect(() => {
+    const fetchDataCallback = async () => {
+      const result = await fetchData();
+      if (!header) {
+        setRolesState(result.slice(0, limitMax));
+      } else {
+        setRolesState(result);
+      }
+    };
+    if (modalForm.refresh) {
+      fetchDataCallback()
+        .then(() => setModalForm({ refresh: "" }))
+        .catch((err) => console.error(err));
+    }
+  }, [roleUpdate, modalForm.refresh]);
 
   return (
     <>
@@ -85,7 +85,7 @@ export default function RolesListing({ header = true }) {
             )}
             <button
               className="tw-w-[150px] tw-h-[38px]  tw-border-2 tw-border-black tw-rounded-full tw-ml-5 "
-              onClick={() => setModalState({ isOpen: true, action: "add" })}
+              onClick={() => openModal("addRole")}
             >
               Add new Role
             </button>
@@ -133,11 +133,11 @@ export default function RolesListing({ header = true }) {
           ))}
       </section>
       <Modal
-        isOpen={modalState.isOpen}
+        isOpen={modalState.isOpen && modalState.action === "addRole"}
         title={"Create New Role"}
-        onClose={() => setModalState({ isOpen: false, action: "" })}
+        onClose={() => closeModal("addRole")}
       >
-        <CreateNewRole setModalState={setModalState} />
+        <CreateNewRole />
       </Modal>
     </>
   );

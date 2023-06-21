@@ -3,17 +3,15 @@ import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
-import axios from "axios";
+import { fetchRoleData } from "../utils/apiServices";
 import SubFeatureContent from "../components/SubFeatureContent";
 import CreateNewRole from "../components/CreateNewRole";
 import { NavigationContext } from "../context/NavigationProvider";
+import { ModalContext } from "../context/ModalProvider";
 
 const fetchData = async (roleId) => {
   try {
-    const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
-    const response = await axios.get(
-      CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + `/roles/${roleId}`
-    );
+    const response = await fetchRoleData(roleId);
     return response?.data;
   } catch (error) {
     console.error(error);
@@ -21,25 +19,27 @@ const fetchData = async (roleId) => {
 };
 
 export default function RoleDetail() {
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    action: "",
-    roleId: "",
-  });
   const [getState, setGetState] = useState(null);
 
   const navigate = useNavigate();
   const params = useParams();
+
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
+  const { modalState, openModal, closeModal, modalForm, setModalForm } =
+    useContext(ModalContext);
 
   useEffect(() => {
     const fetchDataCallback = async () => {
       const result = await fetchData(params.id);
       setGetState(result);
     };
-    fetchDataCallback().catch((err) => console.error(err));
-  }, [params]);
+    if (modalForm.refresh) {
+      fetchDataCallback()
+        .then(() => setModalForm({ refresh: false }))
+        .catch((err) => console.error(err));
+    }
+  }, [modalForm.refresh]);
 
   return (
     <>
@@ -62,13 +62,7 @@ export default function RoleDetail() {
                     <>
                       <button
                         className="tw-mr-5 hover:tw-underline"
-                        onClick={() =>
-                          setModalState({
-                            isOpen: true,
-                            action: "edit",
-                            roleId: getState?.roleId,
-                          })
-                        }
+                        onClick={() => openModal("editRole")}
                       >
                         Edit
                       </button>
@@ -101,12 +95,11 @@ export default function RoleDetail() {
           ))}
       </section>
       <Modal
-        isOpen={modalState.isOpen}
+        isOpen={modalState.isOpen && modalState.action === "editRole"}
         title={"Edit Role"}
-        onClose={() => setModalState({ isOpen: false, action: "", roleId: "" })}
+        onClose={() => closeModal("editRole")}
       >
         <CreateNewRole
-          setModalState={setModalState}
           initialValues={{
             roleId: getState?.roleId,
             roleName: getState?.roleName,

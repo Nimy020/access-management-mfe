@@ -4,6 +4,10 @@ interface ModalContextType {
   modalState: { isOpen: boolean; action: string };
   openModal: (action: any) => void;
   closeModal: (action: any) => void;
+  modalForm: any;
+  setModalForm: any;
+  error: string;
+  setError: any;
 }
 
 export const ModalContext = createContext<ModalContextType | undefined>(
@@ -12,6 +16,8 @@ export const ModalContext = createContext<ModalContextType | undefined>(
 
 export const ModalProvider: React.FC = ({ children }) => {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
+  const [modalForm, setModalForm] = useState({ refresh: true });
+  const [error, setError] = useState("");
 
   const openModal = (action) => {
     setModalState({ isOpen: true, action });
@@ -25,6 +31,10 @@ export const ModalProvider: React.FC = ({ children }) => {
     modalState,
     openModal,
     closeModal,
+    modalForm,
+    setModalForm,
+    error,
+    setError,
   };
 
   return (

@@ -23,7 +23,6 @@ export interface PillsProps {
   previousPage?:string;
 }
 export interface CreateNewFeatureProps {
-  setModalState?: any;
   featureId?: string;
 }
 export interface FeatureHeadProps {
@@ -42,7 +41,6 @@ export interface SubFeatureContentProps {
 }
 
 export interface RoleProps {
-  setModalState?: any;
   initialValues?: any;
 }
 export type pageHeader = {

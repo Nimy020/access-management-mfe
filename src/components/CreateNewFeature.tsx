@@ -1,30 +1,21 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { TextBox, Button } from "@sephora-csc/csc-component-library";
 import { CreateNewFeatureProps } from "./Interface";
 import SearchDropDown from "./SearchDropDown/SearchDropDown";
-import axios from "axios";
+import { postFeatureData } from "../utils/apiServices";
 import Pills from "./Pills";
-import { useNavigate } from "react-router-dom";
+import { ModalContext } from "../context/ModalProvider";
 
-const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
 
 const CreateNewFeature = ({
-  setModalState,
   featureId,
 }: CreateNewFeatureProps): React.JSX.Element => {
-  const navigate = useNavigate();
-
-  const [modalForm, setModalForm] = useState({
-    featureName: "",
-    featureDescription: "",
-    roles: [],
-    subFeatures: [],
-  });
-  const [error, setError] = useState("");
+  const { closeModal, modalForm, setModalForm, error, setError } =
+    useContext(ModalContext);
 
   const handleModalSubmit = async () => {
     setError("");
-
     if (
       !modalForm.featureName ||
       !modalForm.featureDescription ||
@@ -49,19 +40,11 @@ const CreateNewFeature = ({
       subFeatures: subFeaturesIds,
     };
 
-    const api_headers_Data = {
-      "Content-Type": "application/json",
-    };
-
     const postAsyncData = async () => {
       try {
-        await axios.post(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature",
-          newFeatureData,
-          { headers: api_headers_Data }
-        );
-        setModalState({ isOpen: false, action: "" });
-        navigate(0);
+        await postFeatureData(newFeatureData);
+        closeModal("addFeature");
+        setModalForm({ refresh: true });
       } catch (error) {
         console.error("Error during POST request:", error);
       }

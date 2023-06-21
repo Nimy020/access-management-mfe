@@ -1,11 +1,10 @@
-import { useNavigate, matchRoutes } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import search from "../assets/Union.svg";
-import axios from "axios";
+import { searchItem } from "../utils/apiServices";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import customStyles from "./SearchDropDown/customStyles";
 import { pageHeader } from "./Interface";
 import Breadcrumb from "./Breadcrumb";
-import routes from "../routes";
 import { NavigationContext } from "../context/NavigationProvider";
 
 const PageHeader = ({
@@ -15,8 +14,6 @@ const PageHeader = ({
   searchBy,
 }: pageHeader): React.JSX.Element => {
   const id = "1234";
-  const [{ route }] = matchRoutes(routes, location);
-  // const { crumbs } = route;
   const navigate = useNavigate();
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
@@ -25,15 +22,12 @@ const PageHeader = ({
   const [options, setOptions] = useState([]);
 
   const inputRef = useRef(null);
-  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
 
   const handleSearchTermChange = async (val) => {
     setIsActive(true);
     const searchTerm = val.value;
     try {
-      const response = await axios.get(
-        `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}${seachItem}${searchTerm}`
-      );
+      const response = await searchItem(seachItem, searchTerm);
       const responseData = response.data;
       if (responseData === "") {
         setOptions([]);
@@ -44,20 +38,6 @@ const PageHeader = ({
       console.error("Error:", error);
     }
   };
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest(".dropdown")) {
-        setIsActive(false);
-        inputRef.current.value = "";
-      }
-    };
-
-    window.addEventListener("click", handleClickOutside);
-
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   const handleClick = (optionId) => {
     setIsActive(false);
@@ -66,6 +46,20 @@ const PageHeader = ({
       `/csc-agent-platform/admin/access-management/${searchBy}/${optionId}`
     );
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".dropdown")) {
+        setIsActive(false);
+        inputRef.current.value = "";
+      }
+    };
+    window.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="tw-bg-gray-3 tw-items-center">

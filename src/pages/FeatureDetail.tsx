@@ -3,7 +3,7 @@ import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
-import axios from "axios";
+import { getFeatureData, editFeatureData } from "../utils/apiServices";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
@@ -11,6 +11,8 @@ import Pills from "../components/Pills";
 import SearchDropDown from "../components/SearchDropDown/SearchDropDown";
 import { NavigationContext } from "../context/NavigationProvider";
 import { ModalContext } from "../context/ModalProvider";
+
+const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
 
 export default function FeatureDetail() {
   const [featureState, setFeatureState] = useState({
@@ -30,16 +32,18 @@ export default function FeatureDetail() {
     roles: [],
   });
 
-  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
   const navigate = useNavigate();
   const params = useParams();
+
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
-  const { modalState, openModal, closeModal } = useContext(ModalContext);
+  const { modalState, openModal, closeModal, modalForm, setModalForm } =
+    useContext(ModalContext);
 
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
+
   const handleEditSubmit = () => {
     const updatedData = {
       ...featureForm,
@@ -47,13 +51,9 @@ export default function FeatureDetail() {
       roleIds: featureState?.roles.map(({ roleId }) => roleId),
       featureId: params?.id,
     };
-    axios
-      .put(
-        `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}feature/${updatedData.featureId}`,
-        updatedData
-      )
+    editFeatureData(updatedData.featureId, updatedData)
       .then((response) => {
-        navigate(0);
+        setModalForm({ refresh: true });
       })
       .catch((error) => {
         console.error(error);
@@ -105,16 +105,18 @@ export default function FeatureDetail() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(
-          `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}features/${params.id}`
-        );
+        const response = await getFeatureData(params?.id);
         setInitialFeatureState(response.data);
       } catch (error) {
         console.error(error);
       }
     }
-    fetchData().catch((err) => console.error(err));
-  }, [params]);
+    if (modalForm.refresh) {
+      fetchData()
+        .then(() => setModalForm({ refresh: false }))
+        .catch((err) => console.error(err));
+    }
+  }, [modalForm.refresh]);
 
   useEffect(() => {
     setFeatureForm({
@@ -182,7 +184,7 @@ export default function FeatureDetail() {
           {!isEditable && (
             <button
               className="tw-w-[150px] tw-h-[38px] tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
-              onClick={() => openModal("add")}
+              onClick={() => openModal("addFeature")}
             >
               Add Sub Feature
             </button>
@@ -240,10 +242,10 @@ export default function FeatureDetail() {
           ))}
       </section>
       <Modal
-        isOpen={modalState.isOpen}
+        isOpen={modalState.isOpen && modalState.action === "addFeature"}
         title={"Create New Feature"}
         onClose={() => {
-          closeModal("add");
+          closeModal("addFeature");
           setFeatureForm({});
         }}
       >

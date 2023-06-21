@@ -2,7 +2,7 @@ import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
 import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
-import axios from "axios";
+import { getPrimaryFeatures } from "../utils/apiServices";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
@@ -20,24 +20,22 @@ export default function AccessManagement() {
   });
   const [isEditable, setIsEditable] = useState(false);
   const [featureForm, setFeatureForm] = useState({});
+
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
-  const { modalState, openModal, closeModal } = useContext(ModalContext);
+  const { modalState, openModal, closeModal, modalForm, setModalForm } =
+    useContext(ModalContext);
 
-  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
+  const navigate = useNavigate();
 
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/primaryfeatures"
-        );
+        const response = await getPrimaryFeatures();
         setFeatureState({
           featureId: "",
           featureName: "Primary Features",
@@ -49,8 +47,12 @@ export default function AccessManagement() {
         console.error(error);
       }
     }
-    fetchData().catch((err) => console.error(err));
-  }, []);
+    if (modalForm.refresh) {
+      fetchData()
+        .then(() => setModalForm({ refresh: false }))
+        .catch((err) => console.error(err));
+    }
+  }, [modalForm.refresh]);
 
   return (
     <>
@@ -71,7 +73,7 @@ export default function AccessManagement() {
         />
         <button
           className="tw-w-[150px] tw-h-[38px]  tw-border-2 tw-border-black tw-rounded-full tw-ml-5 tw-absolute tw-top-10 tw-right-5 tw-sm:tw-right-16 tw-lg:tw-right-36"
-          onClick={() => openModal("add")}
+          onClick={() => openModal("addFeature")}
         >
           Add Feature
         </button>
@@ -106,9 +108,9 @@ export default function AccessManagement() {
           ))}
       </section>
       <Modal
-        isOpen={modalState.isOpen}
+        isOpen={modalState.isOpen && modalState.action === "addFeature"}
         title={"Create New Feature"}
-        onClose={() => closeModal("add")}
+        onClose={() => closeModal("addFeature")}
       >
         <CreateNewFeature featureId={null} />
       </Modal>
