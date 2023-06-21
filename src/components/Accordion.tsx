@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AccordianProps } from "./Interface";
 import editIcon from "../assets/view-edit.svg";
+
 const Accordion = ({
   title,
   children,
@@ -19,6 +20,7 @@ const Accordion = ({
   useEffect(() => {
     if (isEditable) setIsOpen(false);
   }, [isEditable]);
+  
   return (
     <div className=" tw-border-b tw-pt-6 tw-pb-6">
       <div className="tw-flex tw-justify-between tw-items-start">

@@ -16,7 +16,6 @@ const Modal = ({
         onClose();
       }
     };
-
     if (isOpen) {
       document.addEventListener("mousedown", handleOutsideClick);
     }
@@ -25,6 +24,7 @@ const Modal = ({
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen, onClose]);
+  
   if (!isOpen) return null;
   return (
     <div className="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-z-50">
