@@ -23,7 +23,10 @@ export default function FeatureDetail() {
     roles: [],
   });
   const [isEditable, setIsEditable] = useState(false);
-  const [featureForm, setFeatureForm] = useState({});
+  const [featureForm, setFeatureForm] = useState({
+    featureName: null,
+    featureDescription: null,
+  });
   const [initialFeatureState, setInitialFeatureState] = useState({
     subFeatures: [],
     featureId: null,
@@ -45,19 +48,26 @@ export default function FeatureDetail() {
   };
 
   const handleEditSubmit = () => {
-    const updatedData = {
-      ...featureForm,
-      subFeatures: featureState?.subFeatures.map(({ featureId }) => featureId),
-      roleIds: featureState?.roles.map(({ roleId }) => roleId),
-      featureId: params?.id,
-    };
-    editFeatureData(updatedData.featureId, updatedData)
-      .then((response) => {
-        setModalForm({ refresh: true });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    if (!featureForm.featureName || !featureForm.featureDescription) {
+      alert("Please fill the name and description fields");
+    } else {
+      const updatedData = {
+        ...featureForm,
+        subFeatures: featureState?.subFeatures.map(
+          ({ featureId }) => featureId
+        ),
+        roleIds: featureState?.roles.map(({ roleId }) => roleId),
+        featureId: params?.id,
+      };
+      editFeatureData(updatedData.featureId, updatedData)
+        .then((response) => {
+          setModalForm({ refresh: true });
+          setIsEditable(false);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   const handleRoleChange = (id, value) => {
@@ -101,22 +111,26 @@ export default function FeatureDetail() {
     setIsEditable(false);
     setFeatureState(initialFeatureState);
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getFeatureData(params?.id);
-        setInitialFeatureState(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+  async function fetchData() {
+    try {
+      const response = await getFeatureData(params?.id);
+      setInitialFeatureState(response.data);
+    } catch (error) {
+      console.error(error);
     }
+  }
+  useEffect(() => {
     if (modalForm.refresh) {
       fetchData()
         .then(() => setModalForm({ refresh: false }))
         .catch((err) => console.error(err));
     }
   }, [modalForm.refresh]);
+  useEffect(() => {
+    fetchData()
+      .then(() => setModalForm({ refresh: false }))
+      .catch((err) => console.error(err));
+  }, [params]);
 
   useEffect(() => {
     setFeatureForm({
@@ -246,7 +260,7 @@ export default function FeatureDetail() {
         title={"Create New Feature"}
         onClose={() => {
           closeModal("addFeature");
-          setFeatureForm({});
+          setFeatureForm({ featureName: null, featureDescription: null });
         }}
       >
         <CreateNewFeature featureId={featureState?.featureId} />

@@ -31,28 +31,32 @@ export default function AccessManagement() {
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getPrimaryFeatures();
-        setFeatureState({
-          featureId: "",
-          featureName: "Primary Features",
-          featureDescription:
-            "Listed below are primary feature of the cec platform admin management",
-          subFeatures: response.data,
-        });
-      } catch (error) {
-        console.error(error);
-      }
+  async function fetchData() {
+    try {
+      const response = await getPrimaryFeatures();
+      setFeatureState({
+        featureId: "",
+        featureName: "Primary Features",
+        featureDescription:
+          "Listed below are primary feature of the cec platform admin management",
+        subFeatures: response.data,
+      });
+    } catch (error) {
+      console.error(error);
     }
+  }
+  useEffect(() => {
     if (modalForm.refresh) {
       fetchData()
         .then(() => setModalForm({ refresh: false }))
         .catch((err) => console.error(err));
     }
   }, [modalForm.refresh]);
+  useEffect(() => {
+    fetchData()
+      .then(() => setModalForm({ refresh: false }))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { TextBox, Button } from "@sephora-csc/csc-component-library";
 import { RoleProps } from "./Interface";
 import { addRoleData, editRoleData } from "../utils/apiServices";
@@ -9,7 +9,6 @@ const CreateNewRole = ({
 }: RoleProps): React.JSX.Element => {
   const { closeModal, modalForm, setModalForm, error, setError } =
     useContext(ModalContext);
-
   const handleModalSubmit = async () => {
     setError("");
     if (!modalForm.roleName || !modalForm.roleDescription) {
@@ -49,7 +48,13 @@ const CreateNewRole = ({
 
     setModalForm({ ...modalForm, [fieldName]: updatedForm });
   };
-
+  useEffect(() => {
+    setModalForm({
+      roleId: initialValues?.roleId || "",
+      roleName: initialValues?.roleName || "",
+      roleDescription: initialValues?.roleDescription || "",
+    });
+  }, []);
   return (
     <>
       <div className="tw-mt-5">

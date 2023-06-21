@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { TextBox, Button } from "@sephora-csc/csc-component-library";
 import { CreateNewFeatureProps } from "./Interface";
 import SearchDropDown from "./SearchDropDown/SearchDropDown";
@@ -16,12 +16,7 @@ const CreateNewFeature = ({
 
   const handleModalSubmit = async () => {
     setError("");
-    if (
-      !modalForm.featureName ||
-      !modalForm.featureDescription ||
-      !modalForm.roles.length ||
-      !modalForm.subFeatures.length
-    ) {
+    if (!modalForm.featureName || !modalForm.featureDescription) {
       setError("please complete all fields");
       return;
     }
@@ -79,7 +74,14 @@ const CreateNewFeature = ({
       setModalForm({ ...modalForm, [fieldName]: updated });
     }
   };
-
+  useEffect(() => {
+    setModalForm({
+      featureName: "",
+      featureDescription: "",
+      roles: [],
+      subFeatures: [],
+    });
+  }, []);
   return (
     <>
       <div className="tw-mt-5">

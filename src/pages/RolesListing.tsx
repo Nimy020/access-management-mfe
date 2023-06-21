@@ -40,27 +40,32 @@ export default function RolesListing({ header = true }) {
     const deleteDatacallback = async () => {
       if (confirm("Are you sure you want to delete this Role?")) {
         await deleteData(roleId);
+        setModalForm({ refresh: true });
         setRoleUpdate({ key: roleId, message: "deleted successfully" });
       }
     };
     deleteDatacallback().catch((err) => console.error(err));
   };
-
+  const fetchDataCallback = async () => {
+    const result = await fetchData();
+    if (!header) {
+      setRolesState(result.slice(0, limitMax));
+    } else {
+      setRolesState(result);
+    }
+  };
   useEffect(() => {
-    const fetchDataCallback = async () => {
-      const result = await fetchData();
-      if (!header) {
-        setRolesState(result.slice(0, limitMax));
-      } else {
-        setRolesState(result);
-      }
-    };
     if (modalForm.refresh) {
       fetchDataCallback()
         .then(() => setModalForm({ refresh: "" }))
         .catch((err) => console.error(err));
     }
   }, [roleUpdate, modalForm.refresh]);
+  useEffect(() => {
+    fetchDataCallback()
+      .then(() => setModalForm({ refresh: "" }))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <>
@@ -68,7 +73,7 @@ export default function RolesListing({ header = true }) {
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative">
         <div className="tw-flex  tw-pt-10 tw-pb-7 tw-border-b-2">
           <div className="tw-w-1/2">
-            <h1 className="tw-text-xl tw-font-bold tw-mr-[880px]">Roles</h1>
+            <h1 className="tw-text-xl tw-font-bold ">Roles</h1>
           </div>
 
           <div className="tw-w-1/2 tw-flex tw-justify-end tw-items-center">

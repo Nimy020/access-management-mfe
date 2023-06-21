@@ -28,18 +28,22 @@ export default function RoleDetail() {
     useContext(NavigationContext);
   const { modalState, openModal, closeModal, modalForm, setModalForm } =
     useContext(ModalContext);
-
+  const fetchDataCallback = async () => {
+    const result = await fetchData(params.id);
+    setGetState(result);
+  };
   useEffect(() => {
-    const fetchDataCallback = async () => {
-      const result = await fetchData(params.id);
-      setGetState(result);
-    };
     if (modalForm.refresh) {
       fetchDataCallback()
         .then(() => setModalForm({ refresh: false }))
         .catch((err) => console.error(err));
     }
   }, [modalForm.refresh]);
+  useEffect(() => {
+    fetchDataCallback()
+      .then(() => setModalForm({ refresh: false }))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <>
