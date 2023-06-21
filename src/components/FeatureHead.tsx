@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { FeatureHeadProps } from "./Interface";
 import axios from "axios";
+import React, { useContext } from "react";
+import { NavigationContext } from "../context/NavigationProvider";
 
 const FeatureHead = ({
   featureState,
@@ -9,22 +11,25 @@ const FeatureHead = ({
   handleChange,
   handleSaveChanges,
   handleCancel,
-}: FeatureHeadProps): JSX.Element => {
-  // const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+}: FeatureHeadProps): React.JSX.Element => {
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
   const navigate = useNavigate();
+  const { setPreviousPageName, previousPageName } =
+    useContext(NavigationContext);
+
   const handleFeatureDelete = () => {
     if (confirm("Are you sure you want to delete this feature?")) {
-      // axios
-      //   .delete(
-      //     `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}feature/${featureState.featureId}`
-      //   )
-      //   .then((response) => {
-      //     navigate("/access-management/");
-      //   })
-
-      //   .catch((error) => {
-      //     console.error("Error deleting:", error);
-      //   });
+      axios
+        .delete(
+          `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}feature/${featureState.featureId}`
+        )
+        .then((response) => {
+          setPreviousPageName([]);
+          navigate("/csc-agent-platform/admin/access-management/");
+        })
+        .catch((error) => {
+          console.error("Error deleting:", error);
+        });
     }
   };
 

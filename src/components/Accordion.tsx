@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AccordianProps } from "./Interface";
 import editIcon from "../assets/view-edit.svg";
 const Accordion = ({
@@ -8,7 +8,7 @@ const Accordion = ({
   handleDelete,
   handleLink,
   subTitle,
-}: AccordianProps): JSX.Element => {
+}: AccordianProps): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleAccordion = (e): void => {

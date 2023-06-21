@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import closeIcon from "../assets/close.svg";
 import { ModalProps } from "./Interface";
 
@@ -7,7 +7,7 @@ const Modal = ({
   onClose,
   children,
   title,
-}: ModalProps): JSX.Element => {
+}: ModalProps): React.JSX.Element => {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Modal = ({
       <div className="tw-modal-overlay tw-fixed tw-inset-0 tw-bg-black tw-opacity-50"></div>
       <div
         ref={modalRef}
-        className="tw-modal-container tw-bg-white tw-w-[440px] tw-h-[607px] md:tw-max-w-md tw-mx-auto tw-rounded tw-shadow-lg tw-z-50 tw-overflow-y-auto"
+        className="tw-modal-container tw-bg-white tw-w-[440px] tw-pb-10 md:tw-max-w-md tw-mx-auto tw-rounded tw-shadow-lg tw-z-50 tw-overflow-y-auto"
       >
         <div className="tw-py-5 tw-modal-header tw-flex tw-items-center">
           <div className="tw-flex-grow tw-text-center tw-font-bold tw-text-lg">

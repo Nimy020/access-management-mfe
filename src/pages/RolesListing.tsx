@@ -1,90 +1,65 @@
 import PageHeader from "../components/PageHeader";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
 import axios from "axios";
-import CreateNewRole from "../components/Role/CreateNewRole";
-import { LocationState } from "../components/Interface";
+import CreateNewRole from "../components/CreateNewRole";
 import { useNavigate } from "react-router-dom";
 import viewEditIcon from "../assets/view-edit.svg";
 import ListHead from "../components/ListHead";
+import { NavigationContext } from "../context/NavigationProvider";
 
 const fetchData = async () => {
-  // try {
-  //   const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
-  //   const response = await axios.get(
-  //     CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles"
-  //   );
-  //   return response?.data;
-  // } catch (error) {
-  //   console.error(error);
-  // }
+  try {
+    const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
+    const response = await axios.get(
+      CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles"
+    );
+    return response?.data;
+  } catch (error) {
+    console.error(error);
+  }
 };
 const deleteData = async (roleId) => {
-  // try {
-  //   const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
-  //   const response = await axios.delete(
-  //     CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + `/role/${roleId}`
-  //   );
-  //   console.log(response);
-  //   return true;
-  // } catch (error) {
-  //   console.error(error);
-  // }
+  try {
+    const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
+    await axios.delete(
+      CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + `/role/${roleId}`
+    );
+    return true;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export default function RolesListing({ header = true }) {
   const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [rolesState, setRolesState] = useState([]);
-  const [roleUpdate, setRoleUpdate] = useState(false);
+  const [roleUpdate, setRoleUpdate] = useState({ key: "", message: "" });
   const limitMax = 3;
-  const state: LocationState = {
-    type: "roles",
-    name: "",
-    id: "",
-  };
   const navigate = useNavigate();
-  const handleBreadcrumb = (id, type) => {console.log(id, type)
-    let breadcrumb = JSON.parse(sessionStorage.getItem("breadcrumb")) || [];
-    breadcrumb.push(state);
-    sessionStorage.setItem("breadcrumb", JSON.stringify(breadcrumb));
-    navigate(`/access-management/${type}/${id}`);
-  };
-  useEffect(() => {
-    // const fetchDataCallback = async () => {
-      const result = [
-        {
-          roleId: "1",
-          roleName: "csc_agent_tier1",
-        },
-        {
-          roleId: "2",
-          roleName: "csc_agent_tier2",
-        },
-        {
-          roleId: "3",
-          roleName: "csc_agent_tier3",
-        },
-        {
-          roleId: "4",
-          roleName: "csc_admin",
-        },
-      ];
+  const { setPreviousPageName, previousPageName } =
+    useContext(NavigationContext);
 
+  useEffect(() => {
+    const fetchDataCallback = async () => {
+      const result = await fetchData();
       if (!header) {
         setRolesState(result.slice(0, limitMax));
       } else {
         setRolesState(result);
       }
-    // };
-    // fetchDataCallback();
+    };
+    fetchDataCallback().catch((err) => console.error(err));
   }, [roleUpdate]);
 
   const deleteRole = (roleId: any) => {
     const deleteDatacallback = async () => {
-      const result = await deleteData(roleId);
-      setRoleUpdate(true);
+      if (confirm("Are you sure you want to delete this Role?")) {
+        await deleteData(roleId);
+        setRoleUpdate({ key: roleId, message: "deleted successfully" });
+      }
     };
-    deleteDatacallback();
+    deleteDatacallback().catch((err) => console.error(err));
   };
 
   return (
@@ -101,7 +76,8 @@ export default function RolesListing({ header = true }) {
               <a
                 className="tw-text-sm tw-cursor-pointer tw-mr-5 tw-text-[#676567]"
                 onClick={() => {
-                  handleBreadcrumb("", "roles");
+                  setPreviousPageName(["Dashboard"]);
+                  navigate(`/csc-agent-platform/admin/access-management/roles`);
                 }}
               >
                 Show all Roles
@@ -137,7 +113,10 @@ export default function RolesListing({ header = true }) {
                   <button
                     className="tw-w-[1.25rem]"
                     onClick={() => {
-                      handleBreadcrumb(item.roleId, "role");
+                      setPreviousPageName([...previousPageName, "Roles"]);
+                      navigate(
+                        `/csc-agent-platform/admin/access-management/role/${item.roleId}`
+                      );
                     }}
                   >
                     <img src={viewEditIcon} alt="Edit"></img>

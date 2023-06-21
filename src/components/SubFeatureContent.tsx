@@ -1,10 +1,11 @@
 import Pills from "./Pills";
 import { SubFeatureContentProps } from "./Interface";
+import React from "react";
 
 export default function SubFeatureContent({
   item,
-  handleChange,
-}: SubFeatureContentProps): JSX.Element {
+  previousPage,
+}: SubFeatureContentProps): React.JSX.Element {
   return (
     <div className="tw-max-w-2xl">
       <p className="tw-text-sm">{item.featureDescription}</p>
@@ -13,7 +14,13 @@ export default function SubFeatureContent({
         <div>
           {item?.roles?.length > 0 &&
             item?.roles?.map((role) => (
-              <Pills key={role.roleId} label={role.roleName} type="roles" />
+              <Pills
+                key={role.roleId}
+                label={role.roleName}
+                type="role"
+                pillId={role.roleId}
+                previousPage={previousPage}
+              />
             ))}
         </div>
       </div>
@@ -30,6 +37,7 @@ export default function SubFeatureContent({
                   pillId={sf.featureId}
                   label={sf.featureName}
                   type="feature"
+                  previousPage={previousPage}
                 />
               ))}
           </div>

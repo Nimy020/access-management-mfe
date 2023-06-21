@@ -1,17 +1,16 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
 import axios from "axios";
 import SubFeatureContent from "../components/SubFeatureContent";
-import { useNavigate } from "react-router-dom";
-import CreateNewRole from "../components/Role/CreateNewRole";
-import { LocationState } from "../components/Interface";
+import CreateNewRole from "../components/CreateNewRole";
+import { NavigationContext } from "../context/NavigationProvider";
 
 const fetchData = async (roleId) => {
   try {
-    const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+    const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
     const response = await axios.get(
       CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + `/roles/${roleId}`
     );
@@ -29,27 +28,17 @@ export default function RoleDetail() {
   });
   const [getState, setGetState] = useState(null);
 
-  const state: LocationState = {
-    type: "role",
-    name: getState?.roleName,
-    id: getState?.roleId,
-  };
-
   const navigate = useNavigate();
   const params = useParams();
-  const handleBreadcrumb = (id,type) => {
-    let breadcrumb = JSON.parse(sessionStorage.getItem("breadcrumb")) || [];
-    breadcrumb.push(state);
-    sessionStorage.setItem("breadcrumb", JSON.stringify(breadcrumb));
-    navigate(`/access-management/${type}/${id}`);
-  };
+  const { setPreviousPageName, previousPageName } =
+    useContext(NavigationContext);
+
   useEffect(() => {
     const fetchDataCallback = async () => {
       const result = await fetchData(params.id);
       setGetState(result);
     };
-    console.log("display params", params);
-    fetchDataCallback();
+    fetchDataCallback().catch((err) => console.error(err));
   }, [params]);
 
   return (
@@ -97,17 +86,17 @@ export default function RoleDetail() {
         {getState?.featureHierarchy?.length > 0 &&
           getState?.featureHierarchy.map((item) => (
             <Accordion
-            title={item.featureName}
-            subTitle={item.featureDescription}
-            key={item.featureId}
-            handleLink={() => {
-              handleBreadcrumb(item.featureId,"feature");
-            }}
+              title={item.featureName}
+              subTitle={item.featureDescription}
+              key={item.featureId}
+              handleLink={() => {
+                setPreviousPageName([...previousPageName, getState.roleName]);
+                navigate(
+                  `/csc-agent-platform/admin/access-management/feature/${item.featureId}`
+                );
+              }}
             >
-              <SubFeatureContent
-                item={item}
-                featureName={getState?.featureName}
-              />
+              <SubFeatureContent item={item} previousPage={getState.roleName} />
             </Accordion>
           ))}
       </section>

@@ -1,39 +1,48 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, matchRoutes } from "react-router-dom";
 import search from "../assets/Union.svg";
-import leftArrow from "../assets/leftArrow.svg";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import customStyles from "./SearchDropDown/customStyles";
 import { pageHeader } from "./Interface";
+import Breadcrumb from "./Breadcrumb";
+import routes from "../routes";
+import { NavigationContext } from "../context/NavigationProvider";
 
 const PageHeader = ({
   seachItem,
   label,
   searchId,
   searchBy,
-}: pageHeader): JSX.Element => {
+}: pageHeader): React.JSX.Element => {
   const id = "1234";
+  const [{ route }] = matchRoutes(routes, location);
+  // const { crumbs } = route;
   const navigate = useNavigate();
+  const { setPreviousPageName, previousPageName } =
+    useContext(NavigationContext);
+
   const [isActive, setIsActive] = useState(false);
   const [options, setOptions] = useState([]);
+
   const inputRef = useRef(null);
-  // const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
+
   const handleSearchTermChange = async (val) => {
     setIsActive(true);
     const searchTerm = val.value;
-    // try {
-    //   const response = await axios.get(
-    //     `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}${seachItem}${searchTerm}`
-    //   );
-    //   const responseData = response.data;
-    //   if (responseData === "") {
-    //     setOptions([]);
-    //   } else {
-    //     setOptions(responseData);
-    //   }
-    // } catch (error) {
-    //   // console.error("Error:", error);
-    // }
+    try {
+      const response = await axios.get(
+        `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}${seachItem}${searchTerm}`
+      );
+      const responseData = response.data;
+      if (responseData === "") {
+        setOptions([]);
+      } else {
+        setOptions(responseData);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -52,51 +61,19 @@ const PageHeader = ({
 
   const handleClick = (optionId) => {
     setIsActive(false);
-    sessionStorage.removeItem("breadcrumb");
-    navigate(`/access-management/${searchBy}/${optionId}`);
+    setPreviousPageName(["Dashboard"]);
+    navigate(
+      `/csc-agent-platform/admin/access-management/${searchBy}/${optionId}`
+    );
   };
-  const breadcrumbArr = JSON.parse(sessionStorage.getItem("breadcrumb"));
-  const breadcrumb = breadcrumbArr?.length && breadcrumbArr.pop();
-  const params = useParams();
+
   return (
     <div className="tw-bg-gray-3 tw-items-center">
       <div className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-py-11 tw-flex tw-h-[10rem]">
         <div className="tw-text-left tw-basis-1/2">
-          {breadcrumb?.name && params?.id && (
-            <button
-              className="tw-flex tw-gap-2 tw-items-center"
-              onClick={() => {
-                sessionStorage.setItem(
-                  "breadcrumb",
-                  JSON.stringify(breadcrumbArr)
-                );
-                navigate(
-                  `/access-management/${breadcrumb?.type}/${
-                    breadcrumb?.id || ""
-                  }`
-                );
-              }}
-            >
-              <img src={leftArrow} alt="" />
-              {breadcrumb.name}
-            </button>
-          )}
-          {!breadcrumb?.name && params?.id && (
-            <button
-              className="tw-flex tw-gap-2 tw-items-center"
-              onClick={() => {
-                sessionStorage.setItem(
-                  "breadcrumb",
-                  JSON.stringify(breadcrumbArr)
-                );
-                navigate(`/access-management/`);
-              }}
-            >
-              <img src={leftArrow} alt="" />
-              Primary Features
-            </button>
-          )}
-          {!params?.id && (
+          {previousPageName.length > 0 ? (
+            <Breadcrumb crumbs={previousPageName} />
+          ) : (
             <>
               <div className="tw-font-bold tw-text-[26px]">
                 Access Management
@@ -114,7 +91,9 @@ const PageHeader = ({
                 placeholder="Search..."
                 ref={inputRef}
                 onChange={(e) => {
-                  handleSearchTermChange(e.target);
+                  handleSearchTermChange(e.target).catch((err) =>
+                    console.error(err)
+                  );
                 }}
               ></input>
             </div>
@@ -133,7 +112,7 @@ const PageHeader = ({
                       }
                       return (
                         <li
-                          key={index}
+                          key={itemId}
                           value={option}
                           className={customStyles.dropdown.optionsList}
                           onClick={() => {

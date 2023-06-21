@@ -6,6 +6,7 @@ import blackArrow from "./select-arrow-black.svg";
 import greyArrow from "./select-arrow-grey.svg";
 import downArrow from "./down-arrow.svg";
 import debounce from "lodash.debounce";
+import axios from "axios";
 
 const SearchDropDown = (props: SearchDropDownProps) => {
   const [optionsHeight, setOptionsHeight] = useState("auto");
@@ -39,8 +40,8 @@ const SearchDropDown = (props: SearchDropDownProps) => {
     };
   }, [ref]);
 
-  const debouncedChangeHandler = debounce((value) => {
-    handleDropDownChange(value);
+  const debouncedChangeHandler = debounce(async (value) => {
+    await handleDropDownChange(value);
   }, 300); // Set the desired debounce delay (e.g., 300 milliseconds)
 
   const handleChange = (event) => {
@@ -49,8 +50,27 @@ const SearchDropDown = (props: SearchDropDownProps) => {
     debouncedChangeHandler(value);
   };
 
+  const handleAsyncDropDownChange = async (inputValue) => {
+    try {
+      if (inputValue?.name) {
+        const response = await axios.get(props.apiUrl + inputValue.name);
+        if (response?.data) {
+          return response?.data;
+        }
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return null;
+  };
+
   const handleDropDownChange = async (inputValue) => {
-    const filterdOptions = await props.onChange({ code: "", name: inputValue });
+    const filterdOptions = await handleAsyncDropDownChange({
+      code: "",
+      name: inputValue,
+    });
     setIsOpen(true);
     setfiltered(filterdOptions);
   };
@@ -63,7 +83,6 @@ const SearchDropDown = (props: SearchDropDownProps) => {
 
   const handleValue = (nameWithCode) => {
     props.setSelectedOption(nameWithCode);
-
     setTick(nameWithCode[props.name]);
     setIsOpen(false);
   };

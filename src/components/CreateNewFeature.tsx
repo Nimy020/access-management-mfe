@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import React, { useState } from "react";
 import { TextBox, Button } from "@sephora-csc/csc-component-library";
 import { CreateNewFeatureProps } from "./Interface";
 import SearchDropDown from "./SearchDropDown/SearchDropDown";
@@ -6,14 +6,12 @@ import axios from "axios";
 import Pills from "./Pills";
 import { useNavigate } from "react-router-dom";
 
-// const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
 
 const CreateNewFeature = ({
   setModalState,
   featureId,
-}: CreateNewFeatureProps): JSX.Element => {
-  const [roles, setRoles] = useState([]);
-  const [subFeatures, setSubFeatures] = useState([]);
+}: CreateNewFeatureProps): React.JSX.Element => {
   const navigate = useNavigate();
 
   const [modalForm, setModalForm] = useState({
@@ -22,113 +20,81 @@ const CreateNewFeature = ({
     roles: [],
     subFeatures: [],
   });
-  const roleRef = useRef(null);
-  const subFeatureRef = useRef(null);
+  const [error, setError] = useState("");
 
-  const handleModalSubmit = () => {
-    // let formData;
-    // const roleIds = modalForm?.roles?.map((role) => {
-    //   return role.roleId;
-    // });
+  const handleModalSubmit = async () => {
+    setError("");
 
-    // const subFeaturesIds = modalForm?.subFeatures?.map((feature) => {
-    //   return feature.featureId;
-    // });
-    // const parentFeatureId = featureId ? featureId : "";
-    // const newFeatureData = {
-    //   parentFeatureId: featureId,
-    //   featureName: modalForm.featureName,
-    //   featureDescription: modalForm.featureDescription,
-    //   roleIds: roleIds,
-    //   subFeatures: subFeaturesIds,
-    // };
+    if (
+      !modalForm.featureName ||
+      !modalForm.featureDescription ||
+      !modalForm.roles.length ||
+      !modalForm.subFeatures.length
+    ) {
+      setError("please complete all fields");
+      return;
+    }
+    const roleIds = modalForm?.roles?.map((role) => {
+      return role.roleId;
+    });
 
-    // const api_headers_Data = {
-    //   "Content-Type": "application/json",
-    // };
+    const subFeaturesIds = modalForm?.subFeatures?.map((feature) => {
+      return feature.featureId;
+    });
+    const newFeatureData = {
+      parentFeatureId: featureId,
+      featureName: modalForm.featureName,
+      featureDescription: modalForm.featureDescription,
+      roleIds: roleIds,
+      subFeatures: subFeaturesIds,
+    };
 
-    // const postAsyncData = async () => {
-    //   try {
-    //     const response = await axios.post(
-    //       CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature",
-    //       newFeatureData,
-    //       { headers: api_headers_Data }
-    //     );
-    //     setModalState({ isOpen: false, action: "" });
-    //     navigate(0);
-    //   } catch (error) {
-    //     console.error("Error during POST request:", error);
-    //   }
-    // };
+    const api_headers_Data = {
+      "Content-Type": "application/json",
+    };
 
-    // postAsyncData();
+    const postAsyncData = async () => {
+      try {
+        await axios.post(
+          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/feature",
+          newFeatureData,
+          { headers: api_headers_Data }
+        );
+        setModalState({ isOpen: false, action: "" });
+        navigate(0);
+      } catch (error) {
+        console.error("Error during POST request:", error);
+      }
+    };
+
+    await postAsyncData();
   };
 
   const handleFormChange = (fieldName, fieldValue) => {
     let updatedForm = fieldValue;
-    if (Array.isArray(modalForm[fieldName])) {
-      updatedForm = modalForm[fieldName];
-      updatedForm?.push(fieldValue);
-    }
-    setModalForm({ ...modalForm, [fieldName]: updatedForm });
-  };
-
-  const handleSelectedRoleDelete = (selectedRoleID) => {
-    if (selectedRoleID) {
-      const updatedRoles = modalForm?.roles?.filter(
-        (value) => value.roleId !== selectedRoleID
+    let fieldId = fieldName === "roles" ? "roleId" : "featureId";
+    if (fieldName === "roles" || fieldName === "subFeatures") {
+      const checkIfpresent = modalForm[fieldName].find(
+        (item) => item[fieldId] === fieldValue[fieldId]
       );
-      setModalForm({ ...modalForm, roles: updatedRoles });
+      if (!checkIfpresent) {
+        updatedForm = modalForm[fieldName];
+        updatedForm?.push(fieldValue);
+        setModalForm({ ...modalForm, [fieldName]: updatedForm });
+      }
+    } else {
+      setModalForm({ ...modalForm, [fieldName]: updatedForm });
     }
   };
 
-  const handleSelectedFeatureDelete = (selectedFeatureId) => {
-    if (selectedFeatureId) {
-      const updatedFeatures = modalForm?.subFeatures?.filter(
-        (value) => value.featureId !== selectedFeatureId
+  const handleSelectedDelete = (selectedId, fieldName) => {
+    const fieldId = fieldName === "roles" ? "roleId" : "featureId";
+    if (selectedId) {
+      const updated = modalForm[fieldName]?.filter(
+        (value) => value[fieldId] !== selectedId
       );
-      setModalForm({ ...modalForm, subFeatures: updatedFeatures });
+      setModalForm({ ...modalForm, [fieldName]: updated });
     }
-  };
-
-  const handleRoleDropDownChange = async (inputValue) => {
-    // try {
-    //   if (inputValue?.name) {
-    //     const response = await axios.get(
-    //       CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
-    //     );
-    //     let filteredData = [];
-    //     if (response?.data) {
-    //       return response?.data;
-    //     }
-    //   } else {
-    //     return null;
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
-    return null;
-  };
-
-  const handleFeatureDropDownChange = async (inputValue) => {
-    // try {
-    //   if (inputValue?.name) {
-    //     const response = await axios.get(
-    //       CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
-    //         "/all/features/" +
-    //         inputValue.name
-    //     );
-    //     let filteredData = [];
-    //     if (response?.data) {
-    //       return response?.data;
-    //     }
-    //   } else {
-    //     return null;
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
-    return null;
   };
 
   return (
@@ -157,14 +123,12 @@ const CreateNewFeature = ({
           className={"col-span-6"}
           label={"Select Roles"}
           type="select"
-          options={roles}
           setSelectedOption={(value) => handleFormChange("roles", value)}
-          dropDownRef={roleRef}
           disabledSelect={true}
           name={"roleName"}
           code={"roleId"}
           selectArrow={"greyArrow"}
-          onChange={handleRoleDropDownChange}
+          apiUrl={CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/"}
           defaultValue={""}
         />
       </div>
@@ -177,7 +141,7 @@ const CreateNewFeature = ({
                 key={sf.roleId}
                 label={sf.roleName}
                 isEditable={true}
-                handleDelete={handleSelectedRoleDelete}
+                handleDelete={(id) => handleSelectedDelete(id, "roles")}
                 pillId={sf.roleId}
               />
             ))}
@@ -191,15 +155,13 @@ const CreateNewFeature = ({
           className={"col-span-6"}
           label={"Select Sub Features"}
           type="select"
-          options={subFeatures}
           setSelectedOption={(value) => handleFormChange("subFeatures", value)}
           defaultValue={""}
-          dropDownRef={subFeatureRef}
           disabledSelect={true}
           name={"featureName"}
           code={"featureId"}
           selectArrow={"greyArrow"}
-          onChange={handleFeatureDropDownChange}
+          apiUrl={CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/features/"}
         />
       </div>
 
@@ -211,13 +173,13 @@ const CreateNewFeature = ({
                 key={sf.featureId}
                 label={sf.featureName}
                 isEditable={true}
-                handleDelete={handleSelectedFeatureDelete}
+                handleDelete={(id) => handleSelectedDelete(id, "subFeatures")}
                 pillId={sf.featureId}
               />
             ))}
         </div>
       </div>
-
+      {error && <div className="tw-text-red"> {error}</div>}
       <div className="tw-mt-[30px]  tw-text-center">
         <Button
           label={"Submit"}

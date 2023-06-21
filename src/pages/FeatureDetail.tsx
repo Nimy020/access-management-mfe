@@ -1,19 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
 import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
-import primaryFeatures from "../demo.json";
 import axios from "axios";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
 import Pills from "../components/Pills";
-import { LocationState } from "../components/Interface";
 import SearchDropDown from "../components/SearchDropDown/SearchDropDown";
+import { NavigationContext } from "../context/NavigationProvider";
+import { ModalContext } from "../context/ModalProvider";
 
 export default function FeatureDetail() {
-  const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [featureState, setFeatureState] = useState({
     subFeatures: [],
     featureId: null,
@@ -21,14 +20,8 @@ export default function FeatureDetail() {
     featureDescription: null,
     roles: [],
   });
-  const roleRef = useRef(null);
-  const subFeatureRef = useRef(null);
-  const [subFeatures, setSubFeatures] = useState([]);
   const [isEditable, setIsEditable] = useState(false);
-  const [roles, setRoles] = useState([]);
   const [featureForm, setFeatureForm] = useState({});
-  const [roleOptions, setRoleOptions] = useState([]);
-  const [featureOptions, setFeatureOptions] = useState([]);
   const [initialFeatureState, setInitialFeatureState] = useState({
     subFeatures: [],
     featureId: null,
@@ -37,54 +30,16 @@ export default function FeatureDetail() {
     roles: [],
   });
 
-  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
-  const state: LocationState = {
-    type: "feature",
-    name: featureState?.featureName,
-    id: featureState?.featureId,
-  };
-
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
   const navigate = useNavigate();
   const params = useParams();
-
-  // const handleRoleSearch = async (val) => {
-  //   const searchTerm = val.value;
-  //   try {
-  //     const response = await axios.get(
-  //       `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/roles/${searchTerm}`
-  //     );
-  //     const data = response.data;
-  //     if (data === "") {
-  //       setRoleOptions([]);
-  //     } else {
-  //       setRoleOptions(data);
-  //     }
-  //   } catch (error) {
-  //     // console.error("Error:", error);
-  //   }
-  // };
-
-  // const handleFeatureSearch = async (val) => {
-  //   const searchTerm = val.value;
-  //   try {
-  //     const response = await axios.get(
-  //       `https://csc-agent-platform-service-qa1.lower.internal.sephora.com/csc-agent-platform-service/v1/acl/all/features/${searchTerm}`
-  //     );
-  //     const data = response.data;
-  //     if (data === "") {
-  //       setFeatureOptions([]);
-  //     } else {
-  //       setFeatureOptions(data);
-  //     }
-  //   } catch (error) {
-  //     // console.error("Error:", error);
-  //   }
-  // };
+  const { setPreviousPageName, previousPageName } =
+    useContext(NavigationContext);
+  const { modalState, openModal, closeModal } = useContext(ModalContext);
 
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
-
   const handleEditSubmit = () => {
     const updatedData = {
       ...featureForm,
@@ -92,15 +47,12 @@ export default function FeatureDetail() {
       roleIds: featureState?.roles.map(({ roleId }) => roleId),
       featureId: params?.id,
     };
-    console.log("Updated data", updatedData, featureForm);
-
     axios
       .put(
         `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}feature/${updatedData.featureId}`,
         updatedData
       )
       .then((response) => {
-        console.log(response.data);
         navigate(0);
       })
       .catch((error) => {
@@ -157,72 +109,12 @@ export default function FeatureDetail() {
           `${CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL}features/${params.id}`
         );
         setInitialFeatureState(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
     }
-    fetchData();
+    fetchData().catch((err) => console.error(err));
   }, [params]);
-
-  const handleRoleDropDownChange = async (inputValue) => {
-    try {
-      console.log(inputValue);
-      if (inputValue?.name) {
-        const response = await axios.get(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/" + inputValue.name
-        );
-        console.log("handleFeatureDropDownChange", response.data);
-        let filteredData = [];
-        if (response?.data) {
-          console.log("filteredData", response?.data);
-          return response?.data;
-        }
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    return null;
-  };
-
-  const handleFeatureDropDownChange = async (inputValue) => {
-    try {
-      console.log(inputValue);
-      if (inputValue?.name) {
-        const response = await axios.get(
-          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL +
-            "/all/features/" +
-            inputValue.name
-        );
-        console.log("handleFeatureDropDownChange", response.data);
-        let filteredData = [];
-        if (response?.data) {
-          //  const filteredData =  response?.data?.map( item => {
-          //     console.log('item', item);
-          //     const newItem = {id: item.featureId, name: item.featureName};
-          //     console.log('newItem', newItem);
-          //     return newItem;
-          //   });
-          console.log("filteredData", response?.data);
-          return response?.data;
-        }
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    return null;
-  };
-
-  // useEffect(() => {
-  //   if (params?.id) {
-  //     const data = primaryFeatures.find((f) => f.featureId === params.id);
-  //     setInitialFeatureState(data);
-  //   }
-  // }, [params]);
 
   useEffect(() => {
     setFeatureForm({
@@ -231,12 +123,7 @@ export default function FeatureDetail() {
     });
     setFeatureState(initialFeatureState);
   }, [initialFeatureState]);
-  const handleBreadcrumb = (id) => {
-    let breadcrumb = JSON.parse(sessionStorage.getItem("breadcrumb")) || [];
-    breadcrumb.push(state);
-    sessionStorage.setItem("breadcrumb", JSON.stringify(breadcrumb));
-    navigate(`/access-management/feature/${id}`);
-  };
+
   return (
     <>
       <PageHeader
@@ -264,16 +151,14 @@ export default function FeatureDetail() {
               className={"col-span-6"}
               label={"Select Roles"}
               type="select"
-              options={roles}
               setSelectedOption={(value) => {
                 handleRoleChange("", value);
               }}
-              dropDownRef={roleRef}
               disabledSelect={true}
               name={"roleName"}
               code={"roleId"}
               selectArrow={"greyArrow"}
-              onChange={handleRoleDropDownChange}
+              apiUrl={CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/roles/"}
               defaultValue={""}
             />
           </div>
@@ -288,6 +173,7 @@ export default function FeatureDetail() {
                 handleDelete={() => handleRoleChange(item.roleId, "")}
                 type={"role"}
                 pillId={item.roleId}
+                previousPage={featureState.featureName}
               />
             ))}
         </div>
@@ -296,7 +182,7 @@ export default function FeatureDetail() {
           {!isEditable && (
             <button
               className="tw-w-[150px] tw-h-[38px] tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
-              onClick={() => setModalState({ isOpen: true, action: "add" })}
+              onClick={() => openModal("add")}
             >
               Add Sub Feature
             </button>
@@ -309,17 +195,15 @@ export default function FeatureDetail() {
               className={"col-span-6"}
               label={"Select Sub Features"}
               type="select"
-              options={subFeatures}
               setSelectedOption={(value) => {
                 if (value.featureId) handleSubfeatureChange("", value);
               }}
               defaultValue={""}
-              dropDownRef={subFeatureRef}
               disabledSelect={true}
               name={"featureName"}
               code={"featureId"}
               selectArrow={"greyArrow"}
-              onChange={handleFeatureDropDownChange}
+              apiUrl={CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/all/features/"}
             />
           </div>
         )}
@@ -338,14 +222,19 @@ export default function FeatureDetail() {
               key={item.featureId}
               isEditable={isEditable}
               handleLink={() => {
-                handleBreadcrumb(item.featureId);
+                setPreviousPageName([
+                  ...previousPageName,
+                  featureState.featureName,
+                ]);
+                navigate(
+                  `/csc-agent-platform/admin/access-management/feature/${item.featureId}`
+                );
               }}
               handleDelete={() => handleSubfeatureChange(item.featureId, "")}
             >
               <SubFeatureContent
                 item={item}
-                featureName={featureState?.featureName}
-                handleChange={handleUpdateFeatureChange}
+                previousPage={featureState.featureName}
               />
             </Accordion>
           ))}
@@ -354,14 +243,11 @@ export default function FeatureDetail() {
         isOpen={modalState.isOpen}
         title={"Create New Feature"}
         onClose={() => {
-          setModalState({ isOpen: false, action: "" });
+          closeModal("add");
           setFeatureForm({});
         }}
       >
-        <CreateNewFeature
-          setModalState={setModalState}
-          featureId={featureState?.featureId}
-        />
+        <CreateNewFeature featureId={featureState?.featureId} />
       </Modal>
     </>
   );

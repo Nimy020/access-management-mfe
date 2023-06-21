@@ -1,6 +1,8 @@
 import { PillsProps } from "./Interface";
 import closeIcon from "../assets/close.svg";
 import { useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
+import { NavigationContext } from "../context/NavigationProvider";
 
 const Pills = ({
   label,
@@ -8,14 +10,20 @@ const Pills = ({
   handleDelete,
   pillId,
   type,
-}: PillsProps): JSX.Element => {
+  previousPage,
+}: PillsProps): React.JSX.Element => {
   const navigate = useNavigate();
+  const { setPreviousPageName, previousPageName } =
+    useContext(NavigationContext);
+
   const handleDeleteClick = () => {
-    // handleDelete(pillId);
+    handleDelete(pillId);
   };
+
   const handlePillClick = () => {
-    {
-      type && navigate(`/access-management/${type}/${pillId}`);
+    if (type && !isEditable) {
+      setPreviousPageName([...previousPageName, previousPage]);
+      navigate(`/csc-agent-platform/admin/access-management/${type}/${pillId}`);
     }
   };
   return (

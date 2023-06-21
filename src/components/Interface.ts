@@ -1,7 +1,9 @@
+import React from "react";
+
 export interface AccordianProps {
   title?: string;
   subTitle?: string;
-  children?: JSX.Element;
+  children?: React.JSX.Element;
   isEditable?: boolean;
   handleDelete?: any;
   handleLink?: any;
@@ -9,23 +11,22 @@ export interface AccordianProps {
 export interface ModalProps {
   isOpen?: boolean;
   onClose?: any;
-  children?: JSX.Element;
+  children?: React.JSX.Element;
   title?: string;
 }
 export interface PillsProps {
   handleDelete?: any;
   label?: string;
-  onChange?: any;
   isEditable?: any;
   pillId?: string;
   type?: string;
+  previousPage?:string;
 }
 export interface CreateNewFeatureProps {
   setModalState?: any;
   featureId?: string;
 }
 export interface FeatureHeadProps {
-  setModalState?: any;
   setIsEditable?: any;
   isEditable?: boolean;
   handleChange?: any;
@@ -37,14 +38,9 @@ export interface FeatureHeadProps {
 export interface SubFeatureContentProps {
   //  Object type should be declared
   item?: any;
-  featureName: string;
-  handleChange?: any;
+  previousPage:string;
 }
-export type LocationState = {
-  name: string;
-  id?: string;
-  type?: string;
-};
+
 export interface RoleProps {
   setModalState?: any;
   initialValues?: any;

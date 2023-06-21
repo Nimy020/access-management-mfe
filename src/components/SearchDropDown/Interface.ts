@@ -13,5 +13,7 @@ export interface SearchDropDownProps {
     name?: string;
     code?: string;
     selectArrow?: string;
+    apiUrl?:string;
+    async?:boolean;
   }
   

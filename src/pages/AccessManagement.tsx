@@ -1,20 +1,17 @@
 import Accordion from "../components/Accordion";
 import PageHeader from "../components/PageHeader";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Modal from "../components/Modal";
-import primaryFeatures from "../demo.json";
 import axios from "axios";
 import FeatureHead from "../components/FeatureHead";
 import CreateNewFeature from "../components/CreateNewFeature";
 import SubFeatureContent from "../components/SubFeatureContent";
-import { LocationState } from "../components/Interface";
 import { useNavigate } from "react-router-dom";
-import RolesListing from './RolesListing';
-
-
+import RolesListing from "./RolesListing";
+import { NavigationContext } from "../context/NavigationProvider";
+import { ModalContext } from "../context/ModalProvider";
 
 export default function AccessManagement() {
-  const [modalState, setModalState] = useState({ isOpen: false, action: "" });
   const [featureState, setFeatureState] = useState({
     subFeatures: null,
     featureId: null,
@@ -23,70 +20,50 @@ export default function AccessManagement() {
   });
   const [isEditable, setIsEditable] = useState(false);
   const [featureForm, setFeatureForm] = useState({});
+  const { setPreviousPageName, previousPageName } =
+    useContext(NavigationContext);
+  const { modalState, openModal, closeModal } = useContext(ModalContext);
 
-  // const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL, API_TIMEOUT } = process.env;
+  const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
 
   const handleUpdateFeatureChange = (fieldName, fieldValue) => {
     setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
   };
 
-  useEffect(() => {
-    setFeatureState({
-      featureId: "",
-      featureName: "Primary Features",
-      featureDescription: "Listed below primary features of CSC",
-      subFeatures: primaryFeatures,
-    });
-  }, []);
-  const state: LocationState = {
-    type: "feature",
-    name: featureState?.featureName,
-    id: featureState?.featureId,
-  };
-
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await axios.get(
-  //         CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/primaryfeatures"
-  //       );
-  //       setFeatureState({
-  //         featureId: "",
-  //         featureName: "Primary Features",
-  //         featureDescription:
-  //           "Listed below are primary feature of the cec platform admin management",
-  //         subFeatures: response.data,
-  //       });
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
-  //   fetchData();
-  // }, []);
-
-  const handleBreadcrumb = (id,type) => {
-    let breadcrumb = JSON.parse(sessionStorage.getItem("breadcrumb")) || [];
-    breadcrumb.push(state);
-    sessionStorage.setItem("breadcrumb", JSON.stringify(breadcrumb));
-    navigate(`/access-management/${type}/${id}`);
-  };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL + "/primaryfeatures"
+        );
+        setFeatureState({
+          featureId: "",
+          featureName: "Primary Features",
+          featureDescription:
+            "Listed below are primary feature of the cec platform admin management",
+          subFeatures: response.data,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchData().catch((err) => console.error(err));
+  }, []);
 
   return (
     <>
-         <PageHeader
+      <PageHeader
         seachItem={"all/features/"}
         label={"featureName"}
         searchId={"featureId"}
         searchBy={"feature"}
       />
-      <RolesListing header={false}  />
-  
+      <RolesListing header={false} />
+
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative tw-mb-28">
         <FeatureHead
-          setModalState={setModalState}
           featureState={featureState}
           setIsEditable={setIsEditable}
           isEditable={isEditable}
@@ -94,7 +71,7 @@ export default function AccessManagement() {
         />
         <button
           className="tw-w-[150px] tw-h-[38px]  tw-border-2 tw-border-black tw-rounded-full tw-ml-5 tw-absolute tw-top-10 tw-right-5 tw-sm:tw-right-16 tw-lg:tw-right-36"
-          onClick={() => setModalState({ isOpen: true, action: "add" })}
+          onClick={() => openModal("add")}
         >
           Add Feature
         </button>
@@ -112,13 +89,18 @@ export default function AccessManagement() {
               subTitle={item.featureDescription}
               key={item.featureId}
               handleLink={() => {
-                handleBreadcrumb(item.featureId,"feature");
+                setPreviousPageName([
+                  ...previousPageName,
+                  featureState.featureName,
+                ]);
+                navigate(
+                  `/csc-agent-platform/admin/access-management/feature/${item.featureId}`
+                );
               }}
             >
               <SubFeatureContent
                 item={item}
-                featureName={featureState?.featureName}
-                handleChange={handleUpdateFeatureChange}
+                previousPage={featureState.featureName}
               />
             </Accordion>
           ))}
@@ -126,9 +108,9 @@ export default function AccessManagement() {
       <Modal
         isOpen={modalState.isOpen}
         title={"Create New Feature"}
-        onClose={() => setModalState({ isOpen: false, action: "" })}
+        onClose={() => closeModal("add")}
       >
-        <CreateNewFeature setModalState={setModalState} featureId={null} />
+        <CreateNewFeature featureId={null} />
       </Modal>
     </>
   );
