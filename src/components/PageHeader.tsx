@@ -15,6 +15,7 @@ const PageHeader = ({
 }: pageHeader): React.JSX.Element => {
   const id = "1234";
   const navigate = useNavigate();
+
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
 
@@ -66,7 +67,7 @@ const PageHeader = ({
       <div className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-py-11 tw-flex tw-h-[10rem]">
         <div className="tw-text-left tw-basis-1/2">
           {previousPageName.length > 0 ? (
-            <Breadcrumb crumbs={previousPageName} />
+            <Breadcrumb />
           ) : (
             <>
               <div className="tw-font-bold tw-text-[26px]">

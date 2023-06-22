@@ -9,10 +9,11 @@ const CreateNewRole = ({
 }: RoleProps): React.JSX.Element => {
   const { closeModal, modalForm, setModalForm, error, setError } =
     useContext(ModalContext);
+
   const handleModalSubmit = async () => {
     setError("");
     if (!modalForm.roleName || !modalForm.roleDescription) {
-      setError("please complete all fields");
+      setError("Please complete all fields");
       return;
     }
 
@@ -48,6 +49,7 @@ const CreateNewRole = ({
 
     setModalForm({ ...modalForm, [fieldName]: updatedForm });
   };
+
   useEffect(() => {
     setModalForm({
       roleId: initialValues?.roleId || "",
@@ -55,6 +57,7 @@ const CreateNewRole = ({
       roleDescription: initialValues?.roleDescription || "",
     });
   }, []);
+
   return (
     <>
       <div className="tw-mt-5">

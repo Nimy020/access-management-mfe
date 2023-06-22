@@ -28,10 +28,12 @@ export default function RoleDetail() {
     useContext(NavigationContext);
   const { modalState, openModal, closeModal, modalForm, setModalForm } =
     useContext(ModalContext);
+
   const fetchDataCallback = async () => {
     const result = await fetchData(params.id);
     setGetState(result);
   };
+
   useEffect(() => {
     if (modalForm.refresh) {
       fetchDataCallback()
@@ -39,6 +41,7 @@ export default function RoleDetail() {
         .catch((err) => console.error(err));
     }
   }, [modalForm.refresh]);
+  
   useEffect(() => {
     fetchDataCallback()
       .then(() => setModalForm({ refresh: false }))
@@ -47,7 +50,12 @@ export default function RoleDetail() {
 
   return (
     <>
-      <PageHeader />
+      <PageHeader
+        seachItem={"all/features/"}
+        label={"featureName"}
+        searchId={"featureId"}
+        searchBy={"feature"}
+      />
       <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36">
         <div className="tw-relative">
           <div className="tw-flex tw-items-center tw-pt-10 tw-pb-7 tw-border-b-2">

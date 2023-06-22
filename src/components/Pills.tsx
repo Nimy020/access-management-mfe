@@ -13,6 +13,7 @@ const Pills = ({
   previousPage,
 }: PillsProps): React.JSX.Element => {
   const navigate = useNavigate();
+  
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
 

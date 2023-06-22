@@ -1,51 +1,64 @@
 import React from "react";
 
+/*** Types ***/
+type Roles = {
+  roleId?: string;
+  roleName?: string;
+  roleDescription?: string;
+};
+
+export type FeatureState = {
+  featureId?: string;
+  featureName?: string;
+  featureDescription?: string;
+  roles?: Roles[];
+  subFeatures?: FeatureState[];
+};
+
+export type pageHeader = {
+  seachItem?: string;
+  label?: string;
+  searchId?: string;
+  searchBy?: string;
+};
+/***  ***/
+
+/*** Interfaces ***/
 export interface AccordianProps {
   title?: string;
   subTitle?: string;
   children?: React.JSX.Element;
   isEditable?: boolean;
-  handleDelete?: any;
-  handleLink?: any;
+  handleDelete?: () => void;
+  handleLink?: () => void;
 }
+
 export interface ModalProps {
   isOpen?: boolean;
-  onClose?: any;
+  onClose?: () => void;
   children?: React.JSX.Element;
   title?: string;
 }
+
 export interface PillsProps {
-  handleDelete?: any;
+  handleDelete?: (id: string) => void;
   label?: string;
-  isEditable?: any;
+  isEditable?: boolean;
   pillId?: string;
   type?: string;
-  previousPage?:string;
+  previousPage?: string;
 }
-export interface CreateNewFeatureProps {
-  featureId?: string;
-}
+
 export interface FeatureHeadProps {
-  setIsEditable?: any;
-  isEditable?: boolean;
-  handleChange?: any;
-  handleSaveChanges?: any;
-  //  Object type should be declared
-  featureState?: any;
-  handleCancel?: any;
+  handleSaveChanges?: (params: any) => void;
+  handleCancel?: () => void;
 }
 export interface SubFeatureContentProps {
-  //  Object type should be declared
-  item?: any;
-  previousPage:string;
+  item?: FeatureState;
+  previousPage: string;
 }
 
 export interface RoleProps {
   initialValues?: any;
 }
-export type pageHeader = {
-  seachItem?: string;
-  label?: string;
-  searchId?: any;
-  searchBy?: string;
-};
+/***  ***/

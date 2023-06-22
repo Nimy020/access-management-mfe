@@ -28,9 +28,10 @@ const deleteData = async (roleId) => {
 
 export default function RolesListing({ header = true }) {
   const [rolesState, setRolesState] = useState([]);
-  const [roleUpdate, setRoleUpdate] = useState({ key: "", message: "" });
+
   const limitMax = 3;
   const navigate = useNavigate();
+
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
   const { modalState, openModal, closeModal, modalForm, setModalForm } =
@@ -41,11 +42,11 @@ export default function RolesListing({ header = true }) {
       if (confirm("Are you sure you want to delete this Role?")) {
         await deleteData(roleId);
         setModalForm({ refresh: true });
-        setRoleUpdate({ key: roleId, message: "deleted successfully" });
       }
     };
     deleteDatacallback().catch((err) => console.error(err));
   };
+
   const fetchDataCallback = async () => {
     const result = await fetchData();
     if (!header) {
@@ -54,13 +55,15 @@ export default function RolesListing({ header = true }) {
       setRolesState(result);
     }
   };
+  
   useEffect(() => {
     if (modalForm.refresh) {
       fetchDataCallback()
         .then(() => setModalForm({ refresh: "" }))
         .catch((err) => console.error(err));
     }
-  }, [roleUpdate, modalForm.refresh]);
+  }, [modalForm.refresh]);
+
   useEffect(() => {
     fetchDataCallback()
       .then(() => setModalForm({ refresh: "" }))
@@ -69,7 +72,14 @@ export default function RolesListing({ header = true }) {
 
   return (
     <>
-      {header && <PageHeader />}
+      {header && (
+        <PageHeader
+          seachItem={"all/features/"}
+          label={"featureName"}
+          searchId={"featureId"}
+          searchBy={"feature"}
+        />
+      )}
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative">
         <div className="tw-flex  tw-pt-10 tw-pb-7 tw-border-b-2">
           <div className="tw-w-1/2">

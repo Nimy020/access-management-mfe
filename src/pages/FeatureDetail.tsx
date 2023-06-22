@@ -11,22 +11,11 @@ import Pills from "../components/Pills";
 import SearchDropDown from "../components/SearchDropDown/SearchDropDown";
 import { NavigationContext } from "../context/NavigationProvider";
 import { ModalContext } from "../context/ModalProvider";
+import { FeatureContext } from "../context/FeatureProvider";
 
 const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
 
 export default function FeatureDetail() {
-  const [featureState, setFeatureState] = useState({
-    subFeatures: [],
-    featureId: null,
-    featureName: null,
-    featureDescription: null,
-    roles: [],
-  });
-  const [isEditable, setIsEditable] = useState(false);
-  const [featureForm, setFeatureForm] = useState({
-    featureName: null,
-    featureDescription: null,
-  });
   const [initialFeatureState, setInitialFeatureState] = useState({
     subFeatures: [],
     featureId: null,
@@ -42,14 +31,12 @@ export default function FeatureDetail() {
     useContext(NavigationContext);
   const { modalState, openModal, closeModal, modalForm, setModalForm } =
     useContext(ModalContext);
+  const { featureState, setFeatureState, isEditable, setIsEditable } =
+    useContext(FeatureContext);
 
-  const handleUpdateFeatureChange = (fieldName, fieldValue) => {
-    setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
-  };
-
-  const handleEditSubmit = () => {
+  const handleEditSubmit = (featureForm) => {
     if (!featureForm.featureName || !featureForm.featureDescription) {
-      alert("Please fill the name and description fields");
+      alert("Name and description fields cannot be empty");
     } else {
       const updatedData = {
         ...featureForm,
@@ -60,7 +47,7 @@ export default function FeatureDetail() {
         featureId: params?.id,
       };
       editFeatureData(updatedData.featureId, updatedData)
-        .then((response) => {
+        .then(() => {
           setModalForm({ refresh: true });
           setIsEditable(false);
         })
@@ -111,14 +98,16 @@ export default function FeatureDetail() {
     setIsEditable(false);
     setFeatureState(initialFeatureState);
   };
-  async function fetchData() {
+
+  const fetchData = async () => {
     try {
       const response = await getFeatureData(params?.id);
       setInitialFeatureState(response.data);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
+
   useEffect(() => {
     if (modalForm.refresh) {
       fetchData()
@@ -126,6 +115,7 @@ export default function FeatureDetail() {
         .catch((err) => console.error(err));
     }
   }, [modalForm.refresh]);
+
   useEffect(() => {
     fetchData()
       .then(() => setModalForm({ refresh: false }))
@@ -133,10 +123,6 @@ export default function FeatureDetail() {
   }, [params]);
 
   useEffect(() => {
-    setFeatureForm({
-      featureName: initialFeatureState?.featureName,
-      featureDescription: initialFeatureState?.featureDescription,
-    });
     setFeatureState(initialFeatureState);
   }, [initialFeatureState]);
 
@@ -150,10 +136,6 @@ export default function FeatureDetail() {
       />
       <section className="tw-px-36 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-mb-28">
         <FeatureHead
-          featureState={featureState}
-          setIsEditable={setIsEditable}
-          isEditable={isEditable}
-          handleChange={handleUpdateFeatureChange}
           handleSaveChanges={handleEditSubmit}
           handleCancel={handleCancel}
         />
@@ -260,10 +242,9 @@ export default function FeatureDetail() {
         title={"Create New Feature"}
         onClose={() => {
           closeModal("addFeature");
-          setFeatureForm({ featureName: null, featureDescription: null });
         }}
       >
-        <CreateNewFeature featureId={featureState?.featureId} />
+        <CreateNewFeature />
       </Modal>
     </>
   );

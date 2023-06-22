@@ -1,23 +1,22 @@
 import React, { useContext, useEffect } from "react";
 import { TextBox, Button } from "@sephora-csc/csc-component-library";
-import { CreateNewFeatureProps } from "./Interface";
 import SearchDropDown from "./SearchDropDown/SearchDropDown";
 import { postFeatureData } from "../utils/apiServices";
 import Pills from "./Pills";
 import { ModalContext } from "../context/ModalProvider";
+import { FeatureContext } from "../context/FeatureProvider";
 
 const { CSC_ADMIN_ACCESS_MANAGEMENT_BASE_URL } = process.env;
 
-const CreateNewFeature = ({
-  featureId,
-}: CreateNewFeatureProps): React.JSX.Element => {
+const CreateNewFeature = (): React.JSX.Element => {
   const { closeModal, modalForm, setModalForm, error, setError } =
     useContext(ModalContext);
+  const { featureState } = useContext(FeatureContext);
 
   const handleModalSubmit = async () => {
     setError("");
     if (!modalForm.featureName || !modalForm.featureDescription) {
-      setError("please complete all fields");
+      setError("Please complete all fields");
       return;
     }
     const roleIds = modalForm?.roles?.map((role) => {
@@ -28,7 +27,7 @@ const CreateNewFeature = ({
       return feature.featureId;
     });
     const newFeatureData = {
-      parentFeatureId: featureId,
+      parentFeatureId: featureState?.featureId,
       featureName: modalForm.featureName,
       featureDescription: modalForm.featureDescription,
       roleIds: roleIds,
@@ -74,6 +73,7 @@ const CreateNewFeature = ({
       setModalForm({ ...modalForm, [fieldName]: updated });
     }
   };
+
   useEffect(() => {
     setModalForm({
       featureName: "",
@@ -82,6 +82,7 @@ const CreateNewFeature = ({
       subFeatures: [],
     });
   }, []);
+
   return (
     <>
       <div className="tw-mt-5">

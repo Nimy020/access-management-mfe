@@ -1,19 +1,28 @@
 import { useNavigate } from "react-router-dom";
 import { FeatureHeadProps } from "./Interface";
 import { deleteFeature } from "../utils/apiServices";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { NavigationContext } from "../context/NavigationProvider";
+import { FeatureContext } from "../context/FeatureProvider";
 
 const FeatureHead = ({
-  featureState,
-  setIsEditable,
-  isEditable,
-  handleChange,
   handleSaveChanges,
   handleCancel,
 }: FeatureHeadProps): React.JSX.Element => {
   const navigate = useNavigate();
+  
   const { setPreviousPageName } = useContext(NavigationContext);
+  const { featureState, setIsEditable, isEditable } =
+    useContext(FeatureContext);
+
+  const [featureForm, setFeatureForm] = useState({
+    featureName: featureState?.featureName,
+    featureDescription: featureState?.featureDescription,
+  });
+
+  const handleChange = (fieldName, fieldValue) => {
+    setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
+  };
 
   const handleFeatureDelete = () => {
     if (confirm("Are you sure you want to delete this feature?")) {
@@ -88,7 +97,9 @@ const FeatureHead = ({
               </p>
             </div>
             <div className="tw-flex tw-basis-1/2 tw-justify-end tw-items-center">
-              <button onClick={handleSaveChanges}>Save Changes</button>
+              <button onClick={() => handleSaveChanges(featureForm)}>
+                Save Changes
+              </button>
               <button
                 className="tw-w-[150px] tw-h-[38px] tw-border-2 tw-border-black tw-rounded-full tw-ml-5"
                 onClick={handleCancel}

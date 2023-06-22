@@ -4,10 +4,16 @@ import { NavigationContext } from "../context/NavigationProvider";
 import { useContext } from "react";
 import homeIcon from "../assets/home.svg";
 
-const Breadcrumb = ({ crumbs }) => {
+const Breadcrumb = () => {
   const navigate = useNavigate();
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
+
+  const handleBackNavigation = () => {
+    previousPageName.pop();
+    setPreviousPageName(previousPageName);
+    navigate(-1);
+  };
 
   return (
     <>
@@ -24,11 +30,7 @@ const Breadcrumb = ({ crumbs }) => {
       {previousPageName.length > 1 && (
         <button
           className="tw-flex tw-gap-2 tw-items-center"
-          onClick={() => {
-            previousPageName.pop();
-            setPreviousPageName(previousPageName);
-            navigate(-1);
-          }}
+          onClick={handleBackNavigation}
         >
           <img src={leftArrow} alt="" />
           {previousPageName[previousPageName.length - 1]}

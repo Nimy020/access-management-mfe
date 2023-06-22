@@ -10,27 +10,17 @@ import { useNavigate } from "react-router-dom";
 import RolesListing from "./RolesListing";
 import { NavigationContext } from "../context/NavigationProvider";
 import { ModalContext } from "../context/ModalProvider";
+import { FeatureContext } from "../context/FeatureProvider";
 
 export default function AccessManagement() {
-  const [featureState, setFeatureState] = useState({
-    subFeatures: null,
-    featureId: null,
-    featureName: null,
-    featureDescription: null,
-  });
-  const [isEditable, setIsEditable] = useState(false);
-  const [featureForm, setFeatureForm] = useState({});
-
   const { setPreviousPageName, previousPageName } =
     useContext(NavigationContext);
   const { modalState, openModal, closeModal, modalForm, setModalForm } =
     useContext(ModalContext);
+  const { featureState, setFeatureState } = useContext(FeatureContext);
 
   const navigate = useNavigate();
 
-  const handleUpdateFeatureChange = (fieldName, fieldValue) => {
-    setFeatureForm({ ...featureForm, [fieldName]: fieldValue });
-  };
   async function fetchData() {
     try {
       const response = await getPrimaryFeatures();
@@ -52,6 +42,7 @@ export default function AccessManagement() {
         .catch((err) => console.error(err));
     }
   }, [modalForm.refresh]);
+
   useEffect(() => {
     fetchData()
       .then(() => setModalForm({ refresh: false }))
@@ -69,12 +60,7 @@ export default function AccessManagement() {
       <RolesListing header={false} />
 
       <section className="tw-px-5 tw-sm:tw-px-16 tw-lg:tw-px-36 tw-relative tw-mb-28">
-        <FeatureHead
-          featureState={featureState}
-          setIsEditable={setIsEditable}
-          isEditable={isEditable}
-          handleChange={handleUpdateFeatureChange}
-        />
+        <FeatureHead />
         <button
           className="tw-w-[150px] tw-h-[38px]  tw-border-2 tw-border-black tw-rounded-full tw-ml-5 tw-absolute tw-top-10 tw-right-5 tw-sm:tw-right-16 tw-lg:tw-right-36"
           onClick={() => openModal("addFeature")}
@@ -116,7 +102,7 @@ export default function AccessManagement() {
         title={"Create New Feature"}
         onClose={() => closeModal("addFeature")}
       >
-        <CreateNewFeature featureId={null} />
+        <CreateNewFeature />
       </Modal>
     </>
   );

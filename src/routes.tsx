@@ -1,28 +1,37 @@
-import AccessManagement from "./pages/AccessManagement";
-import FeatureDetail from "./pages/FeatureDetail";
-import RoleDetail from "./pages/RoleDetail";
-import RolesListing from "./pages/RolesListing";
+import AccessManagement from "./Pages/AccessManagement";
+import FeatureDetail from "./Pages/FeatureDetail";
+import RoleDetail from "./Pages/RoleDetail";
+import RolesListing from "./Pages/RolesListing";
+import { FeatureProvider } from "./context/FeatureProvider";
 const routes = [
   {
-    path: "",
+    path: "/csc-agent-platform/admin/access-management",
     name: "Dashboard",
-    element: <AccessManagement />,
+    element: (
+      <FeatureProvider>
+        <AccessManagement />
+      </FeatureProvider>
+    ),
   },
   {
-    path: "roles",
+    path: "/csc-agent-platform/admin/access-management/roles",
     name: "Roles",
     element: <RolesListing />,
   },
   {
-    path: "role/:id",
+    path: "/csc-agent-platform/admin/access-management/role/:id",
     name: "Roles",
     element: <RoleDetail />,
   },
   {
-    path: "feature/:id",
+    path: "/csc-agent-platform/admin/access-management/feature/:id",
     name: "Features",
 
-    element: <FeatureDetail />,
+    element: (
+      <FeatureProvider>
+        <FeatureDetail />
+      </FeatureProvider>
+    ),
   },
 ];
 

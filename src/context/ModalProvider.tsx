@@ -5,9 +5,9 @@ interface ModalContextType {
   openModal: (action: any) => void;
   closeModal: (action: any) => void;
   modalForm: any;
-  setModalForm: any;
+  setModalForm: (param: any) => void;
   error: string;
-  setError: any;
+  setError: (param: any) => void;
 }
 
 export const ModalContext = createContext<ModalContextType | undefined>(
